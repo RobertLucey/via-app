@@ -174,6 +174,9 @@ public class Journey {
             return false;
         }
 
+        if (this.frames.size() == 0) {
+            return true;
+        }
         double originTime = this.frames.get(0).time;
         double destinationTime = this.frames.get(this.frames.size() - 1).time;
 

@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -25,8 +26,11 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
+import pub.devrel.easypermissions.EasyPermissions;
+
 public class MainService extends Service {
 
+    private static final int REQUEST_LOCATION_PERMISSION = 1;
     AccelerometerInterface accelerometer;
     LocationManager locationManager;
     LocationService locationService;
@@ -53,7 +57,7 @@ public class MainService extends Service {
 
         journey = new Journey(transportType, suspension, sendRelativeTime, minutesToCut, metresToCut);
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) !=
@@ -63,14 +67,12 @@ public class MainService extends Service {
                 PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        locationService = new LocationService(this, journey);
-        locationManager.requestLocationUpdates(
+        this.locationService = new LocationService(this, journey);
+        this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 1000,
                 1,
-                locationService);
-
-        System.out.println("STARTED");
+                this.locationService);
 
         accelerometer = new AccelerometerInterface(this);
 
@@ -80,11 +82,11 @@ public class MainService extends Service {
             @Override
             public void onTranslation(float tx, float ty, float ts) {
                 // set the color red if the device moves in positive x axis
-                AccelerometerPoint ap = new AccelerometerPoint(tx, ty, ts);
-                if (ap.isValid()) {
+                AccelerometerPoint accelerometerPoint = new AccelerometerPoint(tx, ty, ts);
+                if (accelerometerPoint.isValid()) {
                     journey.append(
                             new DataPoint(
-                                    ap,
+                                    accelerometerPoint,
                                     new GPSPoint(
                                             0.0,
                                             0.0
@@ -130,7 +132,7 @@ public class MainService extends Service {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        locationManager.removeUpdates(locationService);
+        this.locationManager.removeUpdates(this.locationService);
         accelerometer.unregister();
         super.onDestroy();
     }

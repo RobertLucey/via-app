@@ -30,7 +30,6 @@ public class DataPoint {
 
         JSONObject data = new JSONObject();
         data.put("acc", this.accelerometerPoint.getJSON(simplify));
-        data.put("gps", this.gpsPoint.getJSON(simplify));
         if (sendRelativeTime) {
             data.put("time", this.time - startTime);
         }

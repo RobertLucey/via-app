@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -15,6 +16,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.roadquality.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import pub.devrel.easypermissions.EasyPermissions;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,20 +27,30 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
-    public static void verifyStoragePermissions(Activity activity) {
+    public void verifyStoragePermissions() {
         // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(
-                activity,
+                this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         );
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
             // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(
-                    activity,
+                    this,
                     PERMISSIONS_STORAGE,
                     REQUEST_EXTERNAL_STORAGE
             );
+        }
+    }
+
+    private void verifyLocationPermissions() {
+        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
+        if(EasyPermissions.hasPermissions(this, perms)) {
+            Toast.makeText(this, "Location permission already granted", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            EasyPermissions.requestPermissions(this, "Please grant the location permission", 1, perms);
         }
     }
 
@@ -45,7 +58,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        verifyStoragePermissions(this);
+        verifyStoragePermissions();
+        verifyLocationPermissions();
+
 
         com.example.roadquality.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
