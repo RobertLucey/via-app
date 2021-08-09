@@ -3,7 +3,6 @@ package com.example.roadquality.models;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.menu.MenuBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,7 +56,7 @@ public class Journey {
 
         // TODO: make sure the transport / suspension / device are the same
 
-        toMerge.frames.stream().forEachOrdered(this.frames::add);
+        this.frames.addAll(toMerge.frames);
     }
 
     public static Journey parse(String journeyStr) throws JSONException {
@@ -156,7 +155,7 @@ public class Journey {
 
         if (idx == 0 || idx2 == 0) {
             // warn about not having enough?
-            this.frames = new ArrayList<DataPoint>();
+            this.frames = new ArrayList<>();
         } else {
             ArrayList<DataPoint> tmpFrames = new ArrayList<>();
             int idx3 = 0;
@@ -214,7 +213,7 @@ public class Journey {
 
         call.enqueue(new Callback() {
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
             }
 
             @Override
@@ -226,11 +225,7 @@ public class Journey {
     }
 
     private double startTime() {
-        return 0;
-    }
-
-    private double endTime() {
-        return 0;
+        return this.frames.get(0).time;
     }
 
     private JSONArray getDataJSON(boolean simplify) throws JSONException {
