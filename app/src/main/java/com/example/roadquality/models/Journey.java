@@ -26,6 +26,8 @@ import okhttp3.Response;
 
 public class Journey {
 
+    final private String uploadUrl = "https://hl7soqwrx3.execute-api.eu-west-1.amazonaws.com/default/upload-road-quality";
+
     final private UUID uuid;
     final private String transportType;
     final private boolean suspension;
@@ -101,6 +103,8 @@ public class Journey {
     public void save() throws IOException, JSONException {
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
 
+        // FIXME: put these in a subdir
+
         File file = new File(root, "bike_" + this.uuid + ".json");
 
         try (FileOutputStream stream = new FileOutputStream(file)) {
@@ -114,7 +118,6 @@ public class Journey {
     }
 
     public void cullTime(double originTime, double destinationTime) {
-
         ArrayList<DataPoint> tmpFrames = new ArrayList<>();
 
         for (DataPoint frame : this.frames) {
@@ -128,40 +131,37 @@ public class Journey {
 
     public void cullDistance() {
         int firstFrameAwayIdx = 0;
-        int lastFrameAwayIdx = 0;
-
-        int idx = 0;
         for (DataPoint frame : this.frames) {
             if (frame.distanceFrom(this.frames.get(0)) > this.metresToCut) {
-                firstFrameAwayIdx = idx;
                 break;
             }
-            idx += 1;
+            firstFrameAwayIdx += 1;
         }
 
         Collections.reverse(this.frames);
 
         // TODO: might need to reverse again
-        int idx2 = 0;
+        int lastFrameAwayIdx = 0;
         for (DataPoint frame : this.frames) {
             if (frame.distanceFrom(this.frames.get(0)) > this.metresToCut) {
-                lastFrameAwayIdx = this.frames.size() - idx2;
+                lastFrameAwayIdx = this.frames.size() - lastFrameAwayIdx;
                 break;
             }
-            idx2 += 1;
+            lastFrameAwayIdx += 1;
         }
 
         Collections.reverse(this.frames);
 
-        if (idx == 0 || idx2 == 0) {
-            // warn about not having enough?
+        if (firstFrameAwayIdx == 0 || lastFrameAwayIdx == 0) {
+            // Warn about not having enough?
+            // Bother even sending?
             this.frames = new ArrayList<>();
         } else {
             ArrayList<DataPoint> tmpFrames = new ArrayList<>();
-            int idx3 = 0;
+            int idx = 0;
             for (DataPoint frame : this.frames) {
-                idx3 += 1;
-                if (idx3 > firstFrameAwayIdx && idx3 < lastFrameAwayIdx) {
+                idx += 1;
+                if (idx > firstFrameAwayIdx && idx < lastFrameAwayIdx) {
                     tmpFrames.add(frame);
                 }
             }
@@ -197,15 +197,11 @@ public class Journey {
         }
     }
 
-    public void postData(String str) throws IOException {
-        // TODO: set up some backend, can just upload from Downloads for the mo
-
+    public void postData(String str) {
         RequestBody body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), str);
-
         OkHttpClient client = new OkHttpClient();
-
         Request request = new Request.Builder()
-                .url("https://hl7soqwrx3.execute-api.eu-west-1.amazonaws.com/default/upload-road-quality")
+                .url(this.uploadUrl)
                 .post(body)
                 .build();
 
@@ -220,18 +216,13 @@ public class Journey {
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
             }
-
         });
-    }
-
-    private double startTime() {
-        return this.frames.get(0).time;
     }
 
     private JSONArray getDataJSON(boolean simplify) throws JSONException {
         JSONArray data = new JSONArray();
         for (DataPoint d : this.frames) {
-            data.put(d.getJSON(simplify, this.sendRelativeTime, this.startTime()));
+            data.put(d.getJSON(simplify, this.sendRelativeTime, this.frames.get(0).time));
         }
         return data;
     }
@@ -255,5 +246,4 @@ public class Journey {
 
         return data;
     }
-
 }
