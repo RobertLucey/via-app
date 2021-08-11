@@ -1,26 +1,26 @@
 package com.example.roadquality;
 
-
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-public class AccelerometerInterface {
+public class GeomagneticInterface {
+
 
     // create an interface with one method
     public interface Listener {
         // create method with all 3
         // axis translation as argument
-        void onTranslation(float[] accelerometerData);
+        void onTranslation(float[] t1);
     }
 
     // create an instance
-    private Listener listener;
+    private GeomagneticInterface.Listener listener;
 
     // method to set the instance
-    public void setListener(Listener l) {
+    public void setListener(GeomagneticInterface.Listener l) {
         listener = l;
     }
 
@@ -30,14 +30,12 @@ public class AccelerometerInterface {
 
     // create constructor with
     // context as argument
-    public AccelerometerInterface(Context context) {
+    public GeomagneticInterface(Context context) {
 
         // create instance of sensor manager
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 
-        // create instance of sensor
-        // with type linear acceleration
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
         // create the sensor listener
         sensorEventListener = new SensorEventListener() {

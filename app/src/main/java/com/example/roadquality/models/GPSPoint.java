@@ -14,6 +14,10 @@ public class GPSPoint {
         this.lng = lng;
     }
 
+    public boolean isPopulated() {
+        return this.lat != 0 && this.lng != 0;
+    }
+
     public static GPSPoint parse(Object gps) throws JSONException {
         if (gps instanceof JSONArray) {
             if (((JSONArray) gps).length() == 0) {

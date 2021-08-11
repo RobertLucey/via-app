@@ -10,9 +10,9 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -26,15 +26,55 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-import pub.devrel.easypermissions.EasyPermissions;
-
 public class MainService extends Service {
 
-    private static final int REQUEST_LOCATION_PERMISSION = 1;
     AccelerometerInterface accelerometer;
     LocationManager locationManager;
     LocationService locationService;
     Journey journey;
+    GeomagneticInterface geoMagInterface;
+
+    float[] currentRotation;
+
+
+    private float[] transpose(float[] matrix) {
+        float temp;
+        temp = matrix[1];
+        matrix[1] = matrix[3];
+        matrix[3] = temp;
+
+        temp = matrix[2];
+        matrix[2] = matrix[6];
+        matrix[6] = temp;
+
+        temp = matrix[5];
+        matrix[5] = matrix[7];
+        matrix[7] = temp;
+
+        return matrix;
+    }
+
+    private float[] mult(float[] matrix1, float[] matrix2) {
+        float[][] first = new float[3][3];
+        int k = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                first[i][j] = matrix1[k];
+                k++;
+            }
+        }
+
+        float[] multiply = new float[3];
+        float sum = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                sum = sum + (first[i][j] * matrix2[i]);
+            }
+            multiply[i] = sum;
+            sum = 0;
+        }
+        return multiply;
+    }
 
 
     public MainService() {
@@ -47,7 +87,7 @@ public class MainService extends Service {
 
     @Override
     public void onStart(Intent intent, int startId) {
-        System.out.println("SERVICE Service Started");
+        System.out.println("SERVICE Service Startedd");
 
         String transportType = intent.getStringExtra("transportType");
         boolean suspension = intent.getBooleanExtra("suspension", false);
@@ -74,15 +114,34 @@ public class MainService extends Service {
                 1,
                 this.locationService);
 
-        accelerometer = new AccelerometerInterface(this);
+        geoMagInterface = new GeomagneticInterface(this);
+        // create a listener for accelerometer
+        geoMagInterface.setListener(new GeomagneticInterface.Listener() {
 
+            @Override
+            public void onTranslation(float[] geoArr) {
+                currentRotation = geoArr;
+            }
+        });
+
+        geoMagInterface.register();
+
+
+        accelerometer = new AccelerometerInterface(this);
         // create a listener for accelerometer
         accelerometer.setListener(new AccelerometerInterface.Listener() {
 
             @Override
-            public void onTranslation(float tx, float ty, float ts) {
+            public void onTranslation(float[] accelerationArr) {
                 // set the color red if the device moves in positive x axis
-                AccelerometerPoint accelerometerPoint = new AccelerometerPoint(tx, ty, ts);
+
+                float[] rotationVectorOutput = currentRotation;
+                float[] rotationMatrix = new float[16];  // 9 or 16?
+                SensorManager.getRotationMatrixFromVector(rotationMatrix, rotationVectorOutput);
+                float[] vertical = mult(transpose(rotationMatrix), accelerationArr);
+
+                AccelerometerPoint accelerometerPoint = new AccelerometerPoint(vertical[0] + vertical[1] + vertical[2]);
+
                 if (accelerometerPoint.isValid()) {
                     journey.append(
                             new DataPoint(
@@ -91,7 +150,7 @@ public class MainService extends Service {
                                             0.0,
                                             0.0
                                     ),
-                                    now().toEpochMilli() / 1000L
+                                    (double) now().toEpochMilli() / 1000
                             )
                     );
                 }
@@ -134,6 +193,7 @@ public class MainService extends Service {
         }
         this.locationManager.removeUpdates(this.locationService);
         accelerometer.unregister();
+        geoMagInterface.unregister();
         super.onDestroy();
     }
 

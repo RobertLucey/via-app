@@ -12,23 +12,25 @@ import static org.junit.Assert.assertEquals;
 public class AccelerometerPointTest {
     @Test
     public void assertIsValid() {
-        AccelerometerPoint point = new AccelerometerPoint(1, 2, 3);
-        assertTrue(point.isValid());
+        assertTrue(new AccelerometerPoint(1, 2, 3).isValid());
+        assertTrue(new AccelerometerPoint(1.1).isValid());
     }
 
     @Test
     public void assertIsNotValid() {
-        AccelerometerPoint point = new AccelerometerPoint(0, 0.1, 0.2);
-        assertFalse(point.isValid());
+        assertFalse(new AccelerometerPoint(0, 0.1, 0.2).isValid());
+        assertFalse(new AccelerometerPoint(0.1).isValid());
     }
 
     @Test
     public void getJson() throws JSONException {
-        AccelerometerPoint point = new AccelerometerPoint(0, 0.1, 0.2);
-
         assertEquals(
-                point.getJSON(false).toString(),
+                new AccelerometerPoint(0, 0.1, 0.2).getJSON(false).toString(),
                 "{\"x\":0,\"y\":0.1,\"z\":0.2}"
+        );
+        assertEquals(
+                new AccelerometerPoint(1.1).getJSON(false).toString(),
+                "1.1"
         );
     }
 }

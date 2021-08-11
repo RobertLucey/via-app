@@ -29,12 +29,12 @@ public class Journey {
     final private String uploadUrl = "https://hl7soqwrx3.execute-api.eu-west-1.amazonaws.com/default/upload-road-quality";
 
     final private UUID uuid;
-    final private String transportType;
-    final private boolean suspension;
-    final private boolean sendRelativeTime;
-    final private int minutesToCut;
-    final private int metresToCut;
     private boolean isCulled;
+    private String transportType;
+    private boolean suspension;
+    private int minutesToCut;
+    private int metresToCut;
+    private boolean sendRelativeTime;
     public ArrayList<DataPoint> frames;
 
     public Journey(
@@ -129,10 +129,26 @@ public class Journey {
         this.frames = tmpFrames;
     }
 
-    public void cullDistance() {
-        int firstFrameAwayIdx = 0;
+    public GPSPoint getOrigin() {
         for (DataPoint frame : this.frames) {
-            if (frame.distanceFrom(this.frames.get(0)) > this.metresToCut) {
+            if (frame.gpsPoint.isPopulated()) {
+                return frame.gpsPoint;
+            }
+        }
+        return new GPSPoint(0, 0);
+    }
+
+    public void cullDistance() throws JSONException {
+        int firstFrameAwayIdx = 0;
+
+        for (DataPoint frame : this.frames) {
+            if (frame.gpsPoint.isPopulated()) {
+                System.out.println(frame.gpsPoint.getJSON(true).toString());
+            }
+        }
+
+        for (DataPoint frame : this.frames) {
+            if (frame.gpsPoint.isPopulated() && frame.distanceFrom(this.getOrigin()) > this.metresToCut) {
                 break;
             }
             firstFrameAwayIdx += 1;
@@ -140,10 +156,10 @@ public class Journey {
 
         Collections.reverse(this.frames);
 
-        // TODO: might need to reverse again
         int lastFrameAwayIdx = 0;
+
         for (DataPoint frame : this.frames) {
-            if (frame.distanceFrom(this.frames.get(0)) > this.metresToCut) {
+            if (frame.gpsPoint.isPopulated() && frame.distanceFrom(this.getOrigin()) > this.metresToCut) {
                 lastFrameAwayIdx = this.frames.size() - lastFrameAwayIdx;
                 break;
             }
@@ -222,23 +238,23 @@ public class Journey {
         });
     }
 
-    private JSONArray getDataJSON(boolean simplify) throws JSONException {
+    private JSONArray getDataJSON(boolean simplify, boolean sending) throws JSONException {
         JSONArray data = new JSONArray();
         for (DataPoint d : this.frames) {
-            data.put(d.getJSON(simplify, this.sendRelativeTime, this.frames.get(0).time));
+            data.put(d.getJSON(simplify, this.sendRelativeTime || !sending, this.frames.get(0).time));
         }
         return data;
     }
 
-    public JSONObject getJSON(boolean simplify, boolean forSend) throws JSONException {
+    public JSONObject getJSON(boolean simplify, boolean sending) throws JSONException {
         JSONObject data = new JSONObject();
         data.put("uuid", this.uuid.toString());
         data.put("device", "phone");
-        data.put("data", this.getDataJSON(simplify));
+        data.put("data", this.getDataJSON(simplify, sending));
         data.put("transport_type", this.transportType);
         data.put("suspension", this.suspension);
 
-        if (!forSend) {
+        if (!sending) {
             // Data below should not be shared remotely. It can be used to generate data to send or
             // is implied by the lack of data being sent
             data.put("is_culled", this.isCulled);
