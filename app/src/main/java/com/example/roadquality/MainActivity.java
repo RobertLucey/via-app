@@ -45,11 +45,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void verifyLocationPermissions() {
-        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
-        if(EasyPermissions.hasPermissions(this, perms)) {
+        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION};
+        if (EasyPermissions.hasPermissions(this, perms)) {
             Toast.makeText(this, "Location permission already granted", Toast.LENGTH_SHORT).show();
-        }
-        else {
+        } else {
             EasyPermissions.requestPermissions(this, "Please grant the location permission", 1, perms);
         }
     }
