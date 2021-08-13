@@ -1,5 +1,12 @@
 package com.example.roadquality.models;
 
+import android.os.Environment;
+
+import org.json.JSONException;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -16,10 +23,19 @@ public class Journeys {
         this.journeys.add(journey);
     }
 
-    public Journeys fromFiles() {
+    public Journeys fromFiles() throws IOException {
         Journeys journeys = new Journeys();
 
-        // TODO GET ALL THE FILES WHERE THEY MIGHT BE
+        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
+
+        Files.list(new File(root + "/bike").toPath())
+                .forEach(path -> {
+                    try {
+                        journeys.add(Journey.fromFile(path.toString()));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                });
 
         return journeys;
     }
@@ -27,7 +43,7 @@ public class Journeys {
     public Journeys getMegaJourneys() {
         Hashtable<String, Journey> megaJourneys = new Hashtable<String, Journey>();
 
-        for (Journey journey: this.journeys) {
+        for (Journey journey : this.journeys) {
             String key = journey.transportType + "_" + journey.suspension;
             if (megaJourneys.get(key) == null) {
                 megaJourneys.put(key, journey);
@@ -38,7 +54,7 @@ public class Journeys {
         }
 
         Journeys journeys = new Journeys();
-        for (Journey journey: megaJourneys.values()) {
+        for (Journey journey : megaJourneys.values()) {
             journeys.add(journey);
         }
         return journeys;

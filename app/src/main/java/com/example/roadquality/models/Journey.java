@@ -158,7 +158,6 @@ public class Journey {
     }
 
     public String filePath() {
-        // FIXME: put these in a subdir
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
 
         File bikeBase = new File(root + "/bike");
