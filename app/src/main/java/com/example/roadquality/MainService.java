@@ -95,7 +95,7 @@ public class MainService extends Service {
         int minutesToCut = intent.getIntExtra("minutesToCut", 99999);
         int metresToCut = intent.getIntExtra("metresToCut", 99999);
 
-        journey = new Journey(transportType, suspension, sendRelativeTime, minutesToCut, metresToCut);
+        this.journey = new Journey(transportType, suspension, sendRelativeTime, minutesToCut, metresToCut);
 
         this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -183,17 +183,22 @@ public class MainService extends Service {
 
     @Override
     public void onDestroy() {
+        this.locationManager.removeUpdates(this.locationService);
+        accelerometer.unregister();
+        geoMagInterface.unregister();
+
         try {
             this.journey.save();
-            this.journey.send();
+
+            // TODO: If sending partials... send partials
+
+            this.journey.send(true);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        this.locationManager.removeUpdates(this.locationService);
-        accelerometer.unregister();
-        geoMagInterface.unregister();
+
         super.onDestroy();
     }
 

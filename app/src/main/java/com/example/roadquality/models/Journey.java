@@ -162,7 +162,7 @@ public class Journey {
 
         File bikeBase = new File(root + "/bike");
 
-        if (!bikeBase.exists()){
+        if (!bikeBase.exists()) {
             bikeBase.mkdirs();
         }
 
@@ -275,15 +275,18 @@ public class Journey {
         return true;
     }
 
-    public void send() throws JSONException, IOException {
+    public void send(boolean removeOnSuccess) throws JSONException, IOException {
         if (this.cull()) {
-            this.postData(this.getJSON(true, true).toString());
+            this.postData(
+                    this.getJSON(true, true).toString(),
+                    removeOnSuccess
+            );
         } else {
             System.out.println("Could not cull so not bothering to send");
         }
     }
 
-    public void postData(String str) {
+    public void postData(String str, boolean removeOnSuccess) {
         RequestBody body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), str);
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -293,9 +296,16 @@ public class Journey {
 
         Call call = client.newCall(request);
 
+        String filePath = this.filePath();
+
         call.enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
+                if (removeOnSuccess) {
+                    if (response.code() == 201 || response.code() == 200) {
+                        new File(filePath).delete();
+                    }
+                }
             }
 
             @Override

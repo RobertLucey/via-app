@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.Hashtable;
 
 public class Journeys {
@@ -23,7 +22,7 @@ public class Journeys {
         this.journeys.add(journey);
     }
 
-    public Journeys fromFiles() throws IOException {
+    public Journeys load() throws IOException {
         Journeys journeys = new Journeys();
 
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();

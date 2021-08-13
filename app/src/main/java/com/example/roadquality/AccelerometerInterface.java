@@ -49,9 +49,13 @@ public class AccelerometerInterface {
                 // different from null
                 if (listener != null) {
                     // pass the three floats in listener on translation of axis
-                    listener.onTranslation(
-                            sensorEvent.values
-                    );
+                    try {
+                        listener.onTranslation(
+                                sensorEvent.values
+                        );
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 

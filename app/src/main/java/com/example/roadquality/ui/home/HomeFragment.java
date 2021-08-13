@@ -1,6 +1,8 @@
 package com.example.roadquality.ui.home;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +19,10 @@ import com.example.roadquality.MainService;
 import com.example.roadquality.R;
 import com.example.roadquality.databinding.FragmentHomeBinding;
 
+import java.util.prefs.Preferences;
 
-public class HomeFragment extends Fragment  {
+
+public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private boolean running = false;
@@ -32,34 +36,34 @@ public class HomeFragment extends Fragment  {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        Spinner staticSpinner = binding.staticSpinner;
-        ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter.createFromResource(
+        Spinner transportTypeSpinner = binding.staticSpinner;
+        ArrayAdapter<CharSequence> transportTypeAdapter = ArrayAdapter.createFromResource(
                 getActivity(),
                 R.array.transport_type,
                 android.R.layout.simple_spinner_item
         );
-        staticAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        staticSpinner.setAdapter(staticAdapter);
+        transportTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        transportTypeSpinner.setAdapter(transportTypeAdapter);
 
 
-        Spinner minutesToCut = binding.minutesToCut;
+        Spinner minutesToCutSpinner = binding.minutesToCut;
         ArrayAdapter<CharSequence> minutesToCutAdapter = ArrayAdapter.createFromResource(
                 getActivity(),
                 R.array.minutes_to_cut,
                 android.R.layout.simple_spinner_item
         );
         minutesToCutAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        minutesToCut.setAdapter(minutesToCutAdapter);
+        minutesToCutSpinner.setAdapter(minutesToCutAdapter);
 
 
-        Spinner metresToCut = binding.metresToCut;
+        Spinner metresToCutSpinner = binding.metresToCut;
         ArrayAdapter<CharSequence> metresToCutAdapter = ArrayAdapter.createFromResource(
                 getActivity(),
                 R.array.metres_to_cut,
                 android.R.layout.simple_spinner_item
         );
         metresToCutAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        metresToCut.setAdapter(metresToCutAdapter);
+        metresToCutSpinner.setAdapter(metresToCutAdapter);
 
 
         CheckBox suspensionCheckbox = (CheckBox) binding.suspensionCheckbox;
@@ -76,11 +80,11 @@ public class HomeFragment extends Fragment  {
                     boolean sendRelativeTime = relativeTimeCheckbox.isChecked();
 
                     Intent mainService = new Intent(getActivity(), MainService.class);
-                    mainService.putExtra("transportType", staticSpinner.getSelectedItem().toString());
+                    mainService.putExtra("transportType", transportTypeSpinner.getSelectedItem().toString());
                     mainService.putExtra("suspension", suspension);
                     mainService.putExtra("sendRelativeTime", sendRelativeTime);
-                    mainService.putExtra("minutesToCut", Integer.parseInt(minutesToCut.getSelectedItem().toString()));
-                    mainService.putExtra("metresToCut", Integer.parseInt(metresToCut.getSelectedItem().toString()));
+                    mainService.putExtra("minutesToCut", Integer.parseInt(minutesToCutSpinner.getSelectedItem().toString()));
+                    mainService.putExtra("metresToCut", Integer.parseInt(metresToCutSpinner.getSelectedItem().toString()));
 
                     // DELETE ON SEND? - not really important
 
