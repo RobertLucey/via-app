@@ -32,7 +32,6 @@ public class HomeFragment extends Fragment  {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-
         Spinner staticSpinner = binding.staticSpinner;
         ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter.createFromResource(
                 getActivity(),

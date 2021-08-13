@@ -87,7 +87,7 @@ public class MainService extends Service {
 
     @Override
     public void onStart(Intent intent, int startId) {
-        System.out.println("SERVICE Service Startedd");
+        System.out.println("SERVICE Service Started");
 
         String transportType = intent.getStringExtra("transportType");
         boolean suspension = intent.getBooleanExtra("suspension", false);

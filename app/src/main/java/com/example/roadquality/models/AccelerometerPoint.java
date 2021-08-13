@@ -72,7 +72,5 @@ public class AccelerometerPoint {
                 return data;
             }
         }
-
-
     }
 }

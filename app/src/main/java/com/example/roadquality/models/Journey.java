@@ -9,11 +9,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Scanner;
 import java.util.UUID;
 
 import okhttp3.Call;
@@ -28,14 +30,15 @@ public class Journey {
 
     final private String uploadUrl = "https://hl7soqwrx3.execute-api.eu-west-1.amazonaws.com/default/upload-road-quality";
 
-    final private UUID uuid;
+    final public UUID uuid;
     private boolean isCulled;
-    private String transportType;
-    private boolean suspension;
+    public String transportType;
+    public boolean suspension;
     private int minutesToCut;
     private int metresToCut;
     private boolean sendRelativeTime;
     public ArrayList<DataPoint> frames;
+    public int includedJourneys = 0;
 
     public Journey(
             String transportType,
@@ -53,12 +56,52 @@ public class Journey {
         this.frames = new ArrayList<>();
     }
 
-    public void mergeDataWith(Journey toMerge) {
-        // To get a mega journey
+    public Journey(
+            UUID uuid,
+            String transportType,
+            boolean suspension,
+            boolean sendRelativeTime,
+            int minutesToCut,
+            int metresToCut
+    ) {
+        this.uuid = uuid;
+        this.transportType = transportType;
+        this.suspension = suspension;
+        this.sendRelativeTime = sendRelativeTime;
+        this.minutesToCut = minutesToCut;
+        this.metresToCut = metresToCut;
+        this.frames = new ArrayList<>();
+    }
 
-        // TODO: make sure the transport / suspension / device are the same
+    public Journey() {
+        this.uuid = UUID.randomUUID();
+    }
 
-        this.frames.addAll(toMerge.frames);
+    public static Journey fromFile(String filepath) throws JSONException {
+        String journeyStr = null;
+        try {
+            File myObj = new File(filepath);
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                journeyStr = myReader.nextLine();
+                break;
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        return Journey.parse(journeyStr);
+    }
+
+    public boolean mergeDataWith(Journey toMerge) {
+        if (this.transportType == toMerge.transportType && this.suspension == toMerge.suspension) {
+            this.frames.addAll(toMerge.frames);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static Journey parse(String journeyStr) throws JSONException {
@@ -82,13 +125,27 @@ public class Journey {
             frames.add(dp);
         }
 
-        Journey journey = new Journey(
-                journeyJson.getString("transport_type"),
-                journeyJson.getBoolean("suspension"),
-                journeyJson.getBoolean("sendRelativeTime"),
-                journeyJson.getInt("minutesToCut"),
-                journeyJson.getInt("metresToCut")
-        );
+        // FIXME: gross. Have journey take in the json
+        Journey journey;
+        if (journeyJson.getString("uuid") != null) {
+            journey = new Journey(
+                    UUID.fromString(journeyJson.getString("uuid")),
+                    journeyJson.getString("transport_type"),
+                    journeyJson.getBoolean("suspension"),
+                    journeyJson.getBoolean("sendRelativeTime"),
+                    journeyJson.getInt("minutesToCut"),
+                    journeyJson.getInt("metresToCut")
+            );
+        } else {
+            journey = new Journey(
+                    journeyJson.getString("transport_type"),
+                    journeyJson.getBoolean("suspension"),
+                    journeyJson.getBoolean("sendRelativeTime"),
+                    journeyJson.getInt("minutesToCut"),
+                    journeyJson.getInt("metresToCut")
+            );
+        }
+
         journey.frames = frames;
 
         return journey;
@@ -100,12 +157,23 @@ public class Journey {
         }
     }
 
-    public void save() throws IOException, JSONException {
+    public String filePath() {
+        // FIXME: put these in a subdir
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
 
-        // FIXME: put these in a subdir
+        File bikeBase = new File(root + "/bike");
 
-        File file = new File(root, "bike_" + this.uuid + ".json");
+        if (!bikeBase.exists()){
+            bikeBase.mkdirs();
+        }
+
+        return bikeBase.toString() + "/" + this.uuid + ".json";
+    }
+
+    public void save() throws IOException, JSONException {
+
+
+        File file = new File(this.filePath());
 
         try (FileOutputStream stream = new FileOutputStream(file)) {
             stream.write(
