@@ -11,5 +11,6 @@ Porting some of https://github.com/RobertLucey/bike to here because parts didn't
 
 - Cuts off the first and last x minutes (configurable) from your ride so nobody knows where you're coming and going to by sharing your ride info
 	- Additionally it cuts first and last x metres. Whichever happens last, time or distance for the start or end takes effect
-- (TODO - look at partials in https://github.com/RobertLucey/bike for reference) Optional mix multiple journeys together and split them again randomly by coordinates so it is unlikely any route will be found (along with a few other privacy measures)
-- If time is included in uploaded data, it is only relative time from the start of the turning on of the device
+- Send journeys in partials which are segmented journeys where only data from a 200m span are grouped and no relative time is included
+	- TODO - put a small gap between so these are more difficult to stitch together, stagger ability to download so can't stich together by time
+- If time is included in uploaded data, it is only relative time from the start of the turning on of the service
