@@ -278,17 +278,21 @@ public class Journey {
 
     public void send(boolean removeOnSuccess) throws JSONException, IOException {
         if (this.cull()) {
-            if (this.sendInPartials) {
 
-                // create partials
-                // when doing partials make sure that all the pieces of one partial are within 500 metres or something so that you can't really track from beginning to end that well
-                // send off individually
-
+            if (this.frames.size() == 0) {
+                System.out.println("No frames after cull so not sending");
             } else {
-                this.postData(
-                        this.getJSON(true, true).toString(),
-                        removeOnSuccess
-                );
+                if (this.sendInPartials) {
+                    for (Journey partialJourney : this.getPartials().journeys) {
+                        partialJourney.save();
+                        partialJourney.send(true);
+                    }
+                } else {
+                    this.postData(
+                            this.getJSON(true, true).toString(),
+                            removeOnSuccess
+                    );
+                }
             }
         } else {
             System.out.println("Could not cull so not bothering to send");

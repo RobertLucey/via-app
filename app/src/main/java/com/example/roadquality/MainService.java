@@ -10,7 +10,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.IBinder;
 
@@ -33,8 +32,6 @@ public class MainService extends Service {
     Journey journey;
 
     AccelerometerSensor accelerometerSensor;
-
-    float[] currentRotation;
 
     public MainService() {
     }
@@ -117,19 +114,9 @@ public class MainService extends Service {
         accelerometerSensor.stop();
 
         try {
-            if (journey.sendInPartials) {
-                for (Journey partialJourney : this.journey.getPartials().journeys) {
-                    partialJourney.save();
-                    partialJourney.send(true);
-                }
-            } else {
-                this.journey.save();
-                this.journey.send(true);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+            this.journey.save();
+            this.journey.send(true);
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
 
