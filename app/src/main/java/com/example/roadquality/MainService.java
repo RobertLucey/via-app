@@ -94,8 +94,10 @@ public class MainService extends Service {
         boolean sendRelativeTime = intent.getBooleanExtra("sendRelativeTime", false);
         int minutesToCut = intent.getIntExtra("minutesToCut", 99999);
         int metresToCut = intent.getIntExtra("metresToCut", 99999);
+        boolean sendPartials = intent.getBooleanExtra("sendPartials", true);
 
         this.journey = new Journey(transportType, suspension, sendRelativeTime, minutesToCut, metresToCut);
+        this.journey.setSendInPartials(sendPartials);  // TODO: setters on all the other things maybe
 
         this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -110,7 +112,7 @@ public class MainService extends Service {
         this.locationService = new LocationService(this, journey);
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
-                1000,
+                2000,
                 1,
                 this.locationService);
 
@@ -188,11 +190,16 @@ public class MainService extends Service {
         geoMagInterface.unregister();
 
         try {
-            this.journey.save();
+            if (journey.sendInPartials) {
+                for (Journey partialJourney: this.journey.getPartials().journeys) {
+                    partialJourney.save();
+                    partialJourney.send(true);
+                }
+            } else {
+                this.journey.save();
+                this.journey.send(true);
+            }
 
-            // TODO: If sending partials... send partials
-
-            this.journey.send(true);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
@@ -68,6 +69,18 @@ public class HomeFragment extends Fragment {
 
         CheckBox suspensionCheckbox = (CheckBox) binding.suspensionCheckbox;
         CheckBox relativeTimeCheckbox = (CheckBox) binding.relativeTimeCheckbox;
+        relativeTimeCheckbox.setChecked(true);
+        CheckBox sendPartialsCheckbox = (CheckBox) binding.sendInPartials;
+
+        // If we send partials we should never send relative time
+        sendPartialsCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    relativeTimeCheckbox.setChecked(false);
+                }
+            }
+        });
 
         final Button button = binding.startStopButton;
         button.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +91,7 @@ public class HomeFragment extends Fragment {
 
                     boolean suspension = suspensionCheckbox.isChecked();
                     boolean sendRelativeTime = relativeTimeCheckbox.isChecked();
+                    boolean sendPartials = sendPartialsCheckbox.isChecked();
 
                     Intent mainService = new Intent(getActivity(), MainService.class);
                     mainService.putExtra("transportType", transportTypeSpinner.getSelectedItem().toString());
@@ -85,6 +99,7 @@ public class HomeFragment extends Fragment {
                     mainService.putExtra("sendRelativeTime", sendRelativeTime);
                     mainService.putExtra("minutesToCut", Integer.parseInt(minutesToCutSpinner.getSelectedItem().toString()));
                     mainService.putExtra("metresToCut", Integer.parseInt(metresToCutSpinner.getSelectedItem().toString()));
+                    mainService.putExtra("sendPartials", sendPartials);
 
                     // DELETE ON SEND? - not really important
 

@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 import java.util.UUID;
@@ -39,6 +40,7 @@ public class Journey {
     private boolean sendRelativeTime;
     public ArrayList<DataPoint> frames;
     public int includedJourneys = 0;
+    public boolean sendInPartials;
 
     public Journey(
             String transportType,
@@ -96,7 +98,7 @@ public class Journey {
     }
 
     public boolean mergeDataWith(Journey toMerge) {
-        if (this.transportType == toMerge.transportType && this.suspension == toMerge.suspension) {
+        if (this.transportType.equals(toMerge.transportType) && this.suspension == toMerge.suspension) {
             this.frames.addAll(toMerge.frames);
             return true;
         } else {
@@ -127,22 +129,22 @@ public class Journey {
 
         // FIXME: gross. Have journey take in the json
         Journey journey;
-        if (journeyJson.getString("uuid") != null) {
+        if (!journeyJson.getString("uuid").equals("")) {
             journey = new Journey(
                     UUID.fromString(journeyJson.getString("uuid")),
                     journeyJson.getString("transport_type"),
                     journeyJson.getBoolean("suspension"),
-                    journeyJson.getBoolean("sendRelativeTime"),
-                    journeyJson.getInt("minutesToCut"),
-                    journeyJson.getInt("metresToCut")
+                    journeyJson.getBoolean("send_relative_time"),
+                    journeyJson.getInt("minutes_to_cut"),
+                    journeyJson.getInt("metres_to_cut")
             );
         } else {
             journey = new Journey(
                     journeyJson.getString("transport_type"),
                     journeyJson.getBoolean("suspension"),
-                    journeyJson.getBoolean("sendRelativeTime"),
-                    journeyJson.getInt("minutesToCut"),
-                    journeyJson.getInt("metresToCut")
+                    journeyJson.getBoolean("send_relative_time"),
+                    journeyJson.getInt("minutes_to_cut"),
+                    journeyJson.getInt("metres_to_cut")
             );
         }
 
@@ -152,20 +154,19 @@ public class Journey {
     }
 
     public void append(DataPoint dp) {
-        if (frames != null) {
-            frames.add(dp);
+        if (this.frames == null) {
+            this.frames = new ArrayList<>();
         }
+        this.frames.add(dp);
+
     }
 
     public String filePath() {
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-
         File bikeBase = new File(root + "/bike");
-
         if (!bikeBase.exists()) {
             bikeBase.mkdirs();
         }
-
         return bikeBase.toString() + "/" + this.uuid + ".json";
     }
 
@@ -277,10 +278,18 @@ public class Journey {
 
     public void send(boolean removeOnSuccess) throws JSONException, IOException {
         if (this.cull()) {
-            this.postData(
-                    this.getJSON(true, true).toString(),
-                    removeOnSuccess
-            );
+            if (this.sendInPartials) {
+
+                // create partials
+                // when doing partials make sure that all the pieces of one partial are within 500 metres or something so that you can't really track from beginning to end that well
+                // send off individually
+
+            } else {
+                this.postData(
+                        this.getJSON(true, true).toString(),
+                        removeOnSuccess
+                );
+            }
         } else {
             System.out.println("Could not cull so not bothering to send");
         }
@@ -315,6 +324,10 @@ public class Journey {
         });
     }
 
+    public void setSendInPartials(boolean sendInPartials) {
+        this.sendInPartials = sendInPartials;
+    }
+
     private JSONArray getDataJSON(boolean simplify, boolean sending) throws JSONException {
         JSONArray data = new JSONArray();
         for (DataPoint d : this.frames) {
@@ -330,16 +343,67 @@ public class Journey {
         data.put("data", this.getDataJSON(simplify, sending));
         data.put("transport_type", this.transportType);
         data.put("suspension", this.suspension);
+        data.put("is_partial", this.sendInPartials);
 
         if (!sending) {
             // Data below should not be shared remotely. It can be used to generate data to send or
             // is implied by the lack of data being sent
             data.put("is_culled", this.isCulled);
-            data.put("sendRelativeTime", this.sendRelativeTime);
-            data.put("minutesToCut", this.minutesToCut);
-            data.put("metresToCut", this.metresToCut);
+            data.put("send_relative_time", this.sendRelativeTime);
+            data.put("minutes_to_cut", this.minutesToCut);
+            data.put("metres_to_cut", this.metresToCut);
         }
 
         return data;
+    }
+
+    public Journeys getPartials() throws JSONException {
+
+        String transportType = this.transportType;
+        boolean suspension = this.suspension;
+
+        Journeys journeys = new Journeys();
+
+        GPSPoint lastCheckpoint = null;
+        for (DataPoint dp : this.frames) {
+            if (lastCheckpoint == null) {
+                if (dp.gpsPoint.isPopulated()) {
+                    lastCheckpoint = dp.gpsPoint;
+                } else {
+                    continue;
+                }
+            }
+            if (dp.distanceFrom(lastCheckpoint) < 200) {  // TODO: configure 200?
+                journeys.addToLast(dp);
+            } else {
+                lastCheckpoint = null;
+                journeys.add(new Journey());
+            }
+        }
+
+        // TODO: maybe skip the next gps point to put a bit of distance between?
+
+        return journeys;
+    }
+
+    // Get the distance of the journey so that we can see if partials are a good size
+    public double getIndirectDistance() {
+        double accumulatedDist = 0;
+        GPSPoint prevPoint = null;
+
+        for (DataPoint dp : this.frames) {
+            if (!dp.gpsPoint.isPopulated()) {
+                continue;
+            }
+            if (prevPoint == null) {
+                if (dp.gpsPoint.isPopulated()) {
+                    prevPoint = dp.gpsPoint;
+                }
+            } else {
+                accumulatedDist += dp.distanceFrom(prevPoint);
+                prevPoint = dp.gpsPoint;
+            }
+        }
+        return accumulatedDist;
     }
 }

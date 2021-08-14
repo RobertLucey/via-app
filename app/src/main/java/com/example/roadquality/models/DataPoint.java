@@ -1,7 +1,6 @@
 package com.example.roadquality.models;
 
 import com.example.roadquality.Haversine;
-import com.google.android.material.math.MathUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
