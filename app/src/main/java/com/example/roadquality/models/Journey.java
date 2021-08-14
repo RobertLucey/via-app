@@ -14,7 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 import java.util.UUID;
@@ -82,28 +81,16 @@ public class Journey {
     public static Journey fromFile(String filepath) throws JSONException {
         String journeyStr = null;
         try {
-            File myObj = new File(filepath);
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                journeyStr = myReader.nextLine();
-                break;
-            }
-            myReader.close();
+            File journeyFile = new File(filepath);
+            Scanner journeyFileReader = new Scanner(journeyFile);
+            journeyStr = journeyFileReader.nextLine();
+            journeyFileReader.close();
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
 
         return Journey.parse(journeyStr);
-    }
-
-    public boolean mergeDataWith(Journey toMerge) {
-        if (this.transportType.equals(toMerge.transportType) && this.suspension == toMerge.suspension) {
-            this.frames.addAll(toMerge.frames);
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public static Journey parse(String journeyStr) throws JSONException {

@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 public class Journeys {
 
@@ -23,7 +22,7 @@ public class Journeys {
     }
 
     public void addToLast(DataPoint dp) throws JSONException {
-        if (this.journeys.size() == 0 || this.journeys == null) {
+        if (this.journeys.size() == 0) {
             this.journeys.add(new Journey());
             this.addToLast(dp);
         } else {

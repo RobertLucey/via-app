@@ -70,7 +70,8 @@ public class MainService extends Service {
                 LocationManager.GPS_PROVIDER,
                 2000,
                 1,
-                this.locationService);
+                this.locationService
+        );
 
         accelerometerSensor.start();
 
@@ -85,7 +86,11 @@ public class MainService extends Service {
             public void onUpdate(Vector3D a, Vector3D g) {
                 if (accelerometerSensor.significantMotionDetected()) {
                     journey.append(
-                            new DataPoint(new AccelerometerPoint(Math.abs(a.project(g) - 1)), new GPSPoint(0, 0), (double) now().toEpochMilli() / 1000)
+                            new DataPoint(
+                                    new AccelerometerPoint(Math.abs(a.project(g) - 1)),
+                                    new GPSPoint(0, 0),
+                                    (double) now().toEpochMilli() / 1000
+                            )
                     );
                 }
             }

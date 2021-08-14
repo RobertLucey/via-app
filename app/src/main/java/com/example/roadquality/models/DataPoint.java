@@ -38,7 +38,7 @@ public class DataPoint {
     public JSONObject getJSON(boolean simplify, boolean sendRelativeTime, double startTime) throws JSONException {
 
         JSONObject data = new JSONObject();
-        data.put("acc", this.accelerometerPoint.getJSON(simplify));
+        data.put("acc", this.accelerometerPoint.getJSON());
         data.put("gps", this.gpsPoint.getJSON(simplify));
         if (sendRelativeTime) {
             data.put("time", this.time - startTime);
