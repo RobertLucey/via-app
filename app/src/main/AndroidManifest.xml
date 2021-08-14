@@ -10,6 +10,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RoadQuality">
+
+        <service android:name="com.example.roadquality.services.MainService" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
