@@ -28,54 +28,13 @@ import java.io.IOException;
 
 public class MainService extends Service {
 
-    AccelerometerInterface accelerometer;
     LocationManager locationManager;
     LocationService locationService;
     Journey journey;
-    GeomagneticInterface geoMagInterface;
+
+    AccelerometerSensor accelerometerSensor;
 
     float[] currentRotation;
-
-
-    private float[] transpose(float[] matrix) {
-        float temp;
-        temp = matrix[1];
-        matrix[1] = matrix[3];
-        matrix[3] = temp;
-
-        temp = matrix[2];
-        matrix[2] = matrix[6];
-        matrix[6] = temp;
-
-        temp = matrix[5];
-        matrix[5] = matrix[7];
-        matrix[7] = temp;
-
-        return matrix;
-    }
-
-    private float[] mult(float[] matrix1, float[] matrix2) {
-        float[][] first = new float[3][3];
-        int k = 0;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                first[i][j] = matrix1[k];
-                k++;
-            }
-        }
-
-        float[] multiply = new float[3];
-        float sum = 0;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                sum = sum + (first[i][j] * matrix2[i]);
-            }
-            multiply[i] = sum;
-            sum = 0;
-        }
-        return multiply;
-    }
-
 
     public MainService() {
     }
@@ -116,55 +75,24 @@ public class MainService extends Service {
                 1,
                 this.locationService);
 
-        geoMagInterface = new GeomagneticInterface(this);
-        // create a listener for accelerometer
-        geoMagInterface.setListener(new GeomagneticInterface.Listener() {
+        accelerometerSensor.start();
 
-            @Override
-            public void onTranslation(float[] geoArr) {
-                currentRotation = geoArr;
-            }
-        });
-
-        geoMagInterface.register();
-
-
-        accelerometer = new AccelerometerInterface(this);
-        // create a listener for accelerometer
-        accelerometer.setListener(new AccelerometerInterface.Listener() {
-
-            @Override
-            public void onTranslation(float[] accelerationArr) {
-                // set the color red if the device moves in positive x axis
-
-                float[] rotationVectorOutput = currentRotation;
-                float[] rotationMatrix = new float[16];  // 9 or 16?
-                SensorManager.getRotationMatrixFromVector(rotationMatrix, rotationVectorOutput);
-                float[] vertical = mult(transpose(rotationMatrix), accelerationArr);
-
-                AccelerometerPoint accelerometerPoint = new AccelerometerPoint(vertical[0] + vertical[1] + vertical[2]);
-
-                if (accelerometerPoint.isValid()) {
-                    journey.append(
-                            new DataPoint(
-                                    accelerometerPoint,
-                                    new GPSPoint(
-                                            0.0,
-                                            0.0
-                                    ),
-                                    (double) now().toEpochMilli() / 1000
-                            )
-                    );
-                }
-            }
-        });
-
-        accelerometer.register();
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        accelerometerSensor = new AccelerometerSensor(this) {
+            @Override
+            public void onUpdate(Vector3D a, Vector3D g) {
+                if (accelerometerSensor.significantMotionDetected()) {
+                    journey.append(
+                            new DataPoint(new AccelerometerPoint(Math.abs(a.project(g) - 1)), new GPSPoint(0, 0), (double) now().toEpochMilli() / 1000)
+                    );
+                }
+            }
+        };
 
         String CHANNEL_ID = "my_channel_01";
         NotificationChannel channel = new NotificationChannel(
@@ -186,12 +114,11 @@ public class MainService extends Service {
     @Override
     public void onDestroy() {
         this.locationManager.removeUpdates(this.locationService);
-        accelerometer.unregister();
-        geoMagInterface.unregister();
+        accelerometerSensor.stop();
 
         try {
             if (journey.sendInPartials) {
-                for (Journey partialJourney: this.journey.getPartials().journeys) {
+                for (Journey partialJourney : this.journey.getPartials().journeys) {
                     partialJourney.save();
                     partialJourney.send(true);
                 }
