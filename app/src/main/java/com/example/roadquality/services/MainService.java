@@ -1,4 +1,4 @@
-package com.example.roadquality;
+package com.example.roadquality.services;
 
 import static java.time.Instant.now;
 
@@ -16,6 +16,7 @@ import android.os.IBinder;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
+import com.example.roadquality.models.Vector3D;
 import com.example.roadquality.models.AccelerometerPoint;
 import com.example.roadquality.models.DataPoint;
 import com.example.roadquality.models.GPSPoint;

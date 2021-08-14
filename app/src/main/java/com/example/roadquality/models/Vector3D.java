@@ -1,4 +1,4 @@
-package com.example.roadquality;
+package com.example.roadquality.models;
 
 
 public class Vector3D {

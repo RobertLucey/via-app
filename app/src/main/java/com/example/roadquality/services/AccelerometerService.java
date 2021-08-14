@@ -1,4 +1,4 @@
-package com.example.roadquality;
+package com.example.roadquality.services;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -6,6 +6,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
+
+import com.example.roadquality.models.Vector3D;
 
 
 abstract class AccelerometerSensor implements SensorEventListener {

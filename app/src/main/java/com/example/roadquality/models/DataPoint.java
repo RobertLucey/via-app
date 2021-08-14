@@ -1,6 +1,6 @@
 package com.example.roadquality.models;
 
-import com.example.roadquality.Haversine;
+import com.example.roadquality.utils.Haversine;
 
 import org.json.JSONException;
 import org.json.JSONObject;

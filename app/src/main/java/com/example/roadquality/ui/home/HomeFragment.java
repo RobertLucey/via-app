@@ -1,8 +1,6 @@
 package com.example.roadquality.ui.home;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +14,9 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.roadquality.MainService;
 import com.example.roadquality.R;
 import com.example.roadquality.databinding.FragmentHomeBinding;
-
-import java.util.prefs.Preferences;
+import com.example.roadquality.services.MainService;
 
 
 public class HomeFragment extends Fragment {

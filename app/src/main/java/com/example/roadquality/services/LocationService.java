@@ -1,4 +1,4 @@
-package com.example.roadquality;
+package com.example.roadquality.services;
 
 import android.content.Context;
 import android.location.Location;
