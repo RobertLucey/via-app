@@ -47,25 +47,4 @@ public class Journeys {
 
         return journeys;
     }
-
-    public Journeys getMegaJourneys() {
-        Hashtable<String, Journey> megaJourneys = new Hashtable<>();
-
-        for (Journey journey : this.journeys) {
-            String key = journey.transportType + "_" + journey.suspension;
-            if (megaJourneys.get(key) == null) {
-                megaJourneys.put(key, journey);
-            } else {
-                megaJourneys.get(key).mergeDataWith(journey);
-            }
-            megaJourneys.get(key).includedJourneys += 1;
-        }
-
-        Journeys journeys = new Journeys();
-        for (Journey journey : megaJourneys.values()) {
-            journeys.add(journey);
-        }
-        return journeys;
-    }
-
 }
