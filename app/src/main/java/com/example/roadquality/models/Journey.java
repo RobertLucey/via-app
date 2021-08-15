@@ -30,7 +30,7 @@ public class Journey {
 
     final private String uploadUrl = "https://hl7soqwrx3.execute-api.eu-west-1.amazonaws.com/default/upload-road-quality";
 
-    final public UUID uuid;
+    public UUID uuid;
     private boolean isCulled;
     public String transportType;
     public boolean suspension;
@@ -38,41 +38,7 @@ public class Journey {
     private int metresToCut;
     private boolean sendRelativeTime;
     public ArrayList<DataPoint> frames;
-    public int includedJourneys = 0;
     public boolean sendInPartials;
-
-    public Journey(
-            String transportType,
-            boolean suspension,
-            boolean sendRelativeTime,
-            int minutesToCut,
-            int metresToCut
-    ) {
-        this.uuid = UUID.randomUUID();
-        this.transportType = transportType;
-        this.suspension = suspension;
-        this.sendRelativeTime = sendRelativeTime;
-        this.minutesToCut = minutesToCut;
-        this.metresToCut = metresToCut;
-        this.frames = new ArrayList<>();
-    }
-
-    public Journey(
-            UUID uuid,
-            String transportType,
-            boolean suspension,
-            boolean sendRelativeTime,
-            int minutesToCut,
-            int metresToCut
-    ) {
-        this.uuid = uuid;
-        this.transportType = transportType;
-        this.suspension = suspension;
-        this.sendRelativeTime = sendRelativeTime;
-        this.minutesToCut = minutesToCut;
-        this.metresToCut = metresToCut;
-        this.frames = new ArrayList<>();
-    }
 
     public Journey() {
         this.uuid = UUID.randomUUID();
@@ -115,25 +81,15 @@ public class Journey {
         }
 
         // FIXME: gross. Have journey take in the json
-        Journey journey;
+        Journey journey = new Journey();
         if (!journeyJson.getString("uuid").equals("")) {
-            journey = new Journey(
-                    UUID.fromString(journeyJson.getString("uuid")),
-                    journeyJson.getString("transport_type"),
-                    journeyJson.getBoolean("suspension"),
-                    journeyJson.getBoolean("send_relative_time"),
-                    journeyJson.getInt("minutes_to_cut"),
-                    journeyJson.getInt("metres_to_cut")
-            );
-        } else {
-            journey = new Journey(
-                    journeyJson.getString("transport_type"),
-                    journeyJson.getBoolean("suspension"),
-                    journeyJson.getBoolean("send_relative_time"),
-                    journeyJson.getInt("minutes_to_cut"),
-                    journeyJson.getInt("metres_to_cut")
-            );
+            journey.setUUID(UUID.fromString(journeyJson.getString("uuid")));
         }
+        journey.setTransportType(journeyJson.getString("transport_type"));
+        journey.setSuspension(journeyJson.getBoolean("suspension"));
+        journey.setSendRelativeTime(journeyJson.getBoolean("send_relative_time"));
+        journey.setMinutesToCut(journeyJson.getInt("minutes_to_cut"));
+        journey.setMetresToCut(journeyJson.getInt("metres_to_cut"));
 
         journey.frames = frames;
 
@@ -368,7 +324,10 @@ public class Journey {
                 journeys.addToLast(dp);
             } else {
                 lastCheckpoint = null;
-                journeys.add(new Journey());
+                Journey journey = new Journey();
+                journey.setTransportType(this.transportType);
+                journey.setSuspension(this.suspension);
+                journeys.add(journey);
             }
         }
 
@@ -396,5 +355,29 @@ public class Journey {
             }
         }
         return accumulatedDist;
+    }
+
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setTransportType(String transportType) {
+        this.transportType = transportType;
+    }
+
+    public void setSuspension(boolean suspension) {
+        this.suspension = suspension;
+    }
+
+    public void setSendRelativeTime(boolean sendRelativeTime) {
+        this.sendRelativeTime = sendRelativeTime;
+    }
+
+    public void setMinutesToCut(int minutesToCut) {
+        this.minutesToCut = minutesToCut;
+    }
+
+    public void setMetresToCut(int metresToCut) {
+        this.metresToCut = metresToCut;
     }
 }

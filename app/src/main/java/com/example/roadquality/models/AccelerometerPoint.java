@@ -1,23 +1,15 @@
 package com.example.roadquality.models;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class AccelerometerPoint {
 
-    public double x;
-    public double y;
-    public double z;
     public double verticalAcceleration;
 
     public AccelerometerPoint(double verticalAcceleration) {
         this.verticalAcceleration = verticalAcceleration;
     }
 
-    public static AccelerometerPoint parse(Object acc) throws JSONException {
-        System.out.println(acc);
-        if (acc instanceof Double || acc instanceof Integer) {
+    public static AccelerometerPoint parse(Object acc) {
+        if (acc instanceof Number) {
             return new AccelerometerPoint(
                     (Double) acc
             );

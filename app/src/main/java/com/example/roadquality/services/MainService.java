@@ -46,15 +46,13 @@ public class MainService extends Service {
     public void onStart(Intent intent, int startId) {
         System.out.println("SERVICE Service Started");
 
-        String transportType = intent.getStringExtra("transportType");
-        boolean suspension = intent.getBooleanExtra("suspension", false);
-        boolean sendRelativeTime = intent.getBooleanExtra("sendRelativeTime", false);
-        int minutesToCut = intent.getIntExtra("minutesToCut", 99999);
-        int metresToCut = intent.getIntExtra("metresToCut", 99999);
-        boolean sendPartials = intent.getBooleanExtra("sendPartials", true);
-
-        this.journey = new Journey(transportType, suspension, sendRelativeTime, minutesToCut, metresToCut);
-        this.journey.setSendInPartials(sendPartials);  // TODO: setters on all the other things maybe
+        this.journey = new Journey();
+        this.journey.setTransportType(intent.getStringExtra("transportType"));
+        this.journey.setSuspension(intent.getBooleanExtra("suspension", false));
+        this.journey.setSendRelativeTime(intent.getBooleanExtra("sendRelativeTime", false));
+        this.journey.setMinutesToCut(intent.getIntExtra("minutesToCut", 99999));
+        this.journey.setMetresToCut(intent.getIntExtra("metresToCut", 99999));
+        this.journey.setSendInPartials(intent.getBooleanExtra("sendPartials", true));
 
         this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
