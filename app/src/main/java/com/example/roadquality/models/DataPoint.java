@@ -17,15 +17,6 @@ public class DataPoint {
         this.time = time;
     }
 
-    public double distanceFrom(DataPoint cmp) {
-        return Haversine.distance(
-                this.gpsPoint.lat,
-                this.gpsPoint.lng,
-                cmp.gpsPoint.lat,
-                cmp.gpsPoint.lng
-        ) * 1000;
-    }
-
     public double distanceFrom(GPSPoint cmp) {
         return Haversine.distance(
                 this.gpsPoint.lat,

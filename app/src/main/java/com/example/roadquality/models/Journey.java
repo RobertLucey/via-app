@@ -114,8 +114,6 @@ public class Journey {
     }
 
     public void save() throws IOException, JSONException {
-
-
         File file = new File(this.filePath());
 
         try (FileOutputStream stream = new FileOutputStream(file)) {
@@ -305,10 +303,6 @@ public class Journey {
     }
 
     public Journeys getPartials() throws JSONException {
-
-        String transportType = this.transportType;
-        boolean suspension = this.suspension;
-
         Journeys journeys = new Journeys();
 
         GPSPoint lastCheckpoint = null;

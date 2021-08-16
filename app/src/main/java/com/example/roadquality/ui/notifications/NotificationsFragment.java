@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.roadquality.R;
 import com.example.roadquality.databinding.FragmentNotificationsBinding;
 
 public class NotificationsFragment extends Fragment {

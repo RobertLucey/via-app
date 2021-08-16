@@ -22,10 +22,6 @@ public class LocationService implements LocationListener {
     }
 
     @Override
-    public void onLocationChanged( List<Location> locations) {
-    }
-
-    @Override
     public void onLocationChanged(Location location) {
         GPSPoint dp = new GPSPoint(location.getLatitude(), location.getLongitude());
         journey.append(

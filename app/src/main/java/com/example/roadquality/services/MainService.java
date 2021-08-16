@@ -44,8 +44,6 @@ public class MainService extends Service {
 
     @Override
     public void onStart(Intent intent, int startId) {
-        System.out.println("SERVICE Service Started");
-
         this.journey = new Journey();
         this.journey.setTransportType(intent.getStringExtra("transportType"));
         this.journey.setSuspension(intent.getBooleanExtra("suspension", false));
@@ -95,10 +93,10 @@ public class MainService extends Service {
             }
         };
 
-        String CHANNEL_ID = "my_channel_01";
+        String CHANNEL_ID = "road_quality";
         NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID,
-                "Channel human readable title",
+                "Road quality collector",
                 NotificationManager.IMPORTANCE_DEFAULT
         );
 
