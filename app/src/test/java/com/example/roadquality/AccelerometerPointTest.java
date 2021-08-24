@@ -11,16 +11,6 @@ import static org.junit.Assert.assertEquals;
 
 public class AccelerometerPointTest {
     @Test
-    public void assertIsValid() {
-        assertTrue(new AccelerometerPoint(1.1).isValid());
-    }
-
-    @Test
-    public void assertIsNotValid() {
-        assertFalse(new AccelerometerPoint(0.1).isValid());
-    }
-
-    @Test
     public void getJson() throws JSONException {
         assertEquals(
                 new AccelerometerPoint(1.2).getJSON(),

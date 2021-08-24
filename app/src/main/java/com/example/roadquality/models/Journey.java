@@ -4,6 +4,8 @@ import android.os.Environment;
 
 import androidx.annotation.NonNull;
 
+import com.example.roadquality.BuildConfig;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -282,7 +284,9 @@ public class Journey {
     }
 
     public JSONObject getJSON(boolean simplify, boolean sending) throws JSONException {
+
         JSONObject data = new JSONObject();
+        data.put("version", BuildConfig.VERSION_NAME);
         data.put("uuid", this.uuid.toString());
         data.put("device", "phone");
         data.put("data", this.getDataJSON(simplify, sending));
@@ -305,7 +309,10 @@ public class Journey {
     public Journeys getPartials() throws JSONException {
         Journeys journeys = new Journeys();
 
+        GPSPoint previousGPSPoint = null;
         GPSPoint lastCheckpoint = null;
+        boolean inbetween = false;
+        int skippedDistance = 0;
         for (DataPoint dp : this.frames) {
             if (lastCheckpoint == null) {
                 if (dp.gpsPoint.isPopulated()) {
@@ -314,18 +321,32 @@ public class Journey {
                     continue;
                 }
             }
-            if (dp.distanceFrom(lastCheckpoint) < 200) {  // TODO: configure 200?
-                journeys.addToLast(dp);
+            if (inbetween) {
+
+                if (skippedDistance > 50) {
+                    inbetween = false;
+
+                    Journey journey = new Journey();
+                    journey.setTransportType(this.transportType);
+                    journey.setSuspension(this.suspension);
+                    journeys.add(journey);
+                } else {
+                    skippedDistance += dp.distanceFrom(previousGPSPoint);  // the distance from current dp to previous dp
+                }
+
             } else {
-                lastCheckpoint = null;
-                Journey journey = new Journey();
-                journey.setTransportType(this.transportType);
-                journey.setSuspension(this.suspension);
-                journeys.add(journey);
+                if (dp.distanceFrom(lastCheckpoint) < 200) {  // TODO: configure 200?
+                    journeys.addToLast(dp);
+                } else {
+                    inbetween = true;
+                    lastCheckpoint = null;
+
+                }
             }
+            previousGPSPoint = dp.gpsPoint;
         }
 
-        // TODO: maybe skip the next gps point to put a bit of distance between?
+        // TODO: maybe skip the next x metres to make it more difficult to stitch up
 
         return journeys;
     }

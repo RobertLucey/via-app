@@ -18,11 +18,7 @@ public class AccelerometerPoint {
         }
     }
 
-    public boolean isValid() {
-        return Math.abs(this.verticalAcceleration) > 0.5;
-    }
-
     public Object getJSON() {
-        return this.verticalAcceleration;
+        return Math.round(this.verticalAcceleration * 10000.0) / 10000.0;
     }
 }

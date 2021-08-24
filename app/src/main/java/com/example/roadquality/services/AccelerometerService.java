@@ -22,7 +22,7 @@ abstract class AccelerometerSensor implements SensorEventListener {
     private long timeWhenSensorIsSettled = 0;
 
     private Vector3D acceleration, gravity;
-    private static final float PROJECTION_SCALING_FACTOR_TRIGGER = 0.2f;
+    private static final float PROJECTION_SCALING_FACTOR_TRIGGER = 0.1f;
 
     public AccelerometerSensor(Context context) {
         this.acceleration = new Vector3D();

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
@@ -63,48 +62,44 @@ public class HomeFragment extends Fragment {
         metresToCutSpinner.setAdapter(metresToCutAdapter);
 
 
-        CheckBox suspensionCheckbox = (CheckBox) binding.suspensionCheckbox;
-        CheckBox relativeTimeCheckbox = (CheckBox) binding.relativeTimeCheckbox;
+        CheckBox suspensionCheckbox = binding.suspensionCheckbox;
+        CheckBox relativeTimeCheckbox = binding.relativeTimeCheckbox;
         relativeTimeCheckbox.setChecked(true);
-        CheckBox sendPartialsCheckbox = (CheckBox) binding.sendInPartials;
+        CheckBox sendPartialsCheckbox = binding.sendInPartials;
 
         // If we send partials we should never send relative time
-        sendPartialsCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    relativeTimeCheckbox.setChecked(false);
-                }
+        sendPartialsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                relativeTimeCheckbox.setChecked(false);
             }
         });
 
         final Button button = binding.startStopButton;
-        button.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(v -> {
+            if (!running) {
 
-            public void onClick(View v) {
-                // Code here executes on main thread after user presses button
-                if (!running) {
+                String transportType = transportTypeSpinner.getSelectedItem().toString();
+                boolean suspension = suspensionCheckbox.isChecked();
+                boolean sendRelativeTime = relativeTimeCheckbox.isChecked();
+                boolean sendPartials = sendPartialsCheckbox.isChecked();
+                int minutesToCut = Integer.parseInt(minutesToCutSpinner.getSelectedItem().toString());
+                int metresToCut = Integer.parseInt(metresToCutSpinner.getSelectedItem().toString());
 
-                    boolean suspension = suspensionCheckbox.isChecked();
-                    boolean sendRelativeTime = relativeTimeCheckbox.isChecked();
-                    boolean sendPartials = sendPartialsCheckbox.isChecked();
+                Intent mainService = new Intent(getActivity(), MainService.class);
+                mainService.putExtra("transportType", transportType);
+                mainService.putExtra("suspension", suspension);
+                mainService.putExtra("sendRelativeTime", sendRelativeTime);
+                mainService.putExtra("minutesToCut", minutesToCut);
+                mainService.putExtra("metresToCut", metresToCut);
+                mainService.putExtra("sendPartials", sendPartials);
 
-                    Intent mainService = new Intent(getActivity(), MainService.class);
-                    mainService.putExtra("transportType", transportTypeSpinner.getSelectedItem().toString());
-                    mainService.putExtra("suspension", suspension);
-                    mainService.putExtra("sendRelativeTime", sendRelativeTime);
-                    mainService.putExtra("minutesToCut", Integer.parseInt(minutesToCutSpinner.getSelectedItem().toString()));
-                    mainService.putExtra("metresToCut", Integer.parseInt(metresToCutSpinner.getSelectedItem().toString()));
-                    mainService.putExtra("sendPartials", sendPartials);
+                // DELETE ON SEND? - not really important
 
-                    // DELETE ON SEND? - not really important
-
-                    getActivity().startForegroundService(mainService);
-                    running = true;
-                } else {
-                    getActivity().stopService(new Intent(getActivity(), MainService.class));
-                    running = false;
-                }
+                getActivity().startForegroundService(mainService);
+                running = true;
+            } else {
+                getActivity().stopService(new Intent(getActivity(), MainService.class));
+                running = false;
             }
         });
 

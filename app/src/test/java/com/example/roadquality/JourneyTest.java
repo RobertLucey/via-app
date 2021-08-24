@@ -57,6 +57,7 @@ public class JourneyTest {
 
         JSONObject actual = journey.getJSON(true, false);
         actual.remove("uuid");
+        actual.remove("version");
 
         System.out.println(actual.toString());
         assertEquals(
@@ -117,12 +118,12 @@ public class JourneyTest {
         assertEquals(partials.journeys.size(), 12);
 
         ArrayList distances = new ArrayList<>();
-        for (Journey j: partials.journeys) {
+        for (Journey j : partials.journeys) {
             System.out.println(j.getIndirectDistance());
             distances.add(j.getIndirectDistance());
         }
         System.out.println(distances.toString());
-        assertEquals(distances.toString(), "[302.9290253811651, 145.78217865825673, 268.3451756491427, 214.56671859087794, 163.23054310699095, 138.29919301627336, 198.81497119619837, 169.89750165606773, 179.0413047744251, 195.4465006805784, 190.6659207246758, 146.2125857640056]");
-    }
+        assertEquals(distances.toString(), "[302.9290253811651, 0.0, 260.6279687244268, 180.17159501706513, 54.42664775034203, 115.66348714246222, 142.06081606965162, 142.73060411142077, 89.54767497279451, 125.22344660178447, 161.74866787017447, 129.45136455511346]");
 
+    }
 }
