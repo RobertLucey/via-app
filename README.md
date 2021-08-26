@@ -1,6 +1,8 @@
 Android Road Quality Collector App
 ==================================
 
+<img src="/assets/logo.png" alt="via logo" style="height: 100px; width:100px;"/>
+
 Road quality collection from cycling around. This only gathers and uploads data, for map generation / analysis go to https://github.com/RobertLucey/via
 
 Use a mount for the phone if you can for bikes.
