@@ -35,7 +35,7 @@ public class Journeys {
 
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
 
-        Files.list(new File(root + "/bike").toPath())
+        Files.list(new File(root + "/via").toPath())
                 .forEach(path -> {
                     try {
                         journeys.add(Journey.fromFile(path.toString()));

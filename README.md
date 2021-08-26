@@ -1,9 +1,9 @@
 Android Road Quality Collector App
 ==================================
 
-Road quality collection from cycling around. This only gathers and uploads data, for map generation / analysis go to https://github.com/RobertLucey/bike
+Road quality collection from cycling around. This only gathers and uploads data, for map generation / analysis go to https://github.com/RobertLucey/via
 
-Use a bike mount for the phone if you can, data from the phone being in the pocket isn't as good
+Use a mount for the phone if you can for bikes.
 
 ## Requirements
 
@@ -18,3 +18,4 @@ Use a bike mount for the phone if you can, data from the phone being in the pock
 	- Put a small gap between so these are more difficult to stitch together
 	- TODO: stagger ability to download so can't stich together by data availability time
 - If time is included in uploaded data, it is only relative time from the start of the turning on of the service
+	- TODO: If not sending relative time the journey is randomly reversed (or each partial is randomly reversed) so direction can not be determined

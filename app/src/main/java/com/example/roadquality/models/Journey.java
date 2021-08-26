@@ -108,11 +108,11 @@ public class Journey {
 
     public String filePath() {
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-        File bikeBase = new File(root + "/bike");
-        if (!bikeBase.exists()) {
-            bikeBase.mkdirs();
+        File viaBase = new File(root + "/via");
+        if (!viaBase.exists()) {
+            viaBase.mkdirs();
         }
-        return bikeBase.toString() + "/" + this.uuid + ".json";
+        return viaBase.toString() + "/" + this.uuid + ".json";
     }
 
     public void save() throws IOException, JSONException {
