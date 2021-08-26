@@ -277,9 +277,12 @@ public class Journey {
 
     private JSONArray getDataJSON(boolean simplify, boolean sending) throws JSONException {
         JSONArray data = new JSONArray();
-        for (DataPoint d : this.frames) {
-            data.put(d.getJSON(simplify, this.sendRelativeTime || !sending, this.frames.get(0).time));
+        if (this.frames != null) {
+            for (DataPoint d : this.frames) {
+                data.put(d.getJSON(simplify, this.sendRelativeTime || !sending, this.frames.get(0).time));
+            }
         }
+
         return data;
     }
 
@@ -336,6 +339,9 @@ public class Journey {
 
             } else {
                 if (dp.distanceFrom(lastCheckpoint) < 200) {  // TODO: configure 200?
+
+                    // We don't want to include time when sending partials
+                    dp.time = 0;
                     journeys.addToLast(dp);
                 } else {
                     inbetween = true;
@@ -347,6 +353,13 @@ public class Journey {
         }
 
         // TODO: maybe skip the next x metres to make it more difficult to stitch up
+
+        // For each partial randomly reverse so direction can't be found
+        for (Journey journey : journeys.journeys) {
+            if (Math.random() > 0.5) {
+                Collections.reverse(journey.frames);
+            }
+        }
 
         return journeys;
     }
