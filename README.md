@@ -20,4 +20,4 @@ Use a mount for the phone if you can for bikes.
 	- Put a small gap between so these are more difficult to stitch together
 	- TODO: stagger ability to download so can't stich together by data availability time
 - If time is included in uploaded data, it is only relative time from the start of the turning on of the service
-	- TODO: If not sending relative time the journey is randomly reversed (or each partial is randomly reversed) so direction can not be determined
+	- If not sending relative time the journey is randomly reversed (or each partial is randomly reversed) so direction can not be determined
