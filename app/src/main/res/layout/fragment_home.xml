@@ -10,9 +10,9 @@
         android:id="@+id/start_stop_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="140dp"
-        android:layout_marginBottom="112dp"
-        android:text="START/STOP"
+        android:layout_marginStart="160dp"
+        android:layout_marginBottom="140dp"
+        android:text="START"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

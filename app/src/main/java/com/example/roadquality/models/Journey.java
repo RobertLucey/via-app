@@ -39,7 +39,7 @@ public class Journey {
     private int minutesToCut;
     private int metresToCut;
     private boolean sendRelativeTime;
-    public ArrayList<DataPoint> frames;
+    public ArrayList<DataPoint> frames = new ArrayList();
     public boolean sendInPartials;
 
     public Journey() {

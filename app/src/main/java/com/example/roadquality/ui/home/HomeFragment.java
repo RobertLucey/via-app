@@ -67,6 +67,8 @@ public class HomeFragment extends Fragment {
         relativeTimeCheckbox.setChecked(true);
         CheckBox sendPartialsCheckbox = binding.sendInPartials;
 
+        Button startStop = root.findViewById(R.id.start_stop_button);
+
         // If we send partials we should never send relative time
         sendPartialsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -77,6 +79,8 @@ public class HomeFragment extends Fragment {
         final Button button = binding.startStopButton;
         button.setOnClickListener(v -> {
             if (!running) {
+
+                startStop.setText("STOP");
 
                 String transportType = transportTypeSpinner.getSelectedItem().toString();
                 boolean suspension = suspensionCheckbox.isChecked();
@@ -100,6 +104,7 @@ public class HomeFragment extends Fragment {
             } else {
                 getActivity().stopService(new Intent(getActivity(), MainService.class));
                 running = false;
+                startStop.setText("START");
             }
         });
 
