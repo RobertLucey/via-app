@@ -10,18 +10,18 @@
         android:id="@+id/start_stop_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-        android:layout_marginBottom="140dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="150dp"
         android:text="START"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TableLayout
-        android:layout_width="383dp"
-        android:layout_height="548dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginBottom="167dp"
+        android:layout_width="334dp"
+        android:layout_height="231dp"
+        android:layout_marginBottom="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <TableRow
@@ -29,10 +29,10 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:text="Transport type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_column="1" />
+                android:layout_column="1"
+                android:text="Transport type" />
 
             <Spinner
                 android:id="@+id/static_spinner"
@@ -46,10 +46,10 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:text="Suspension"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_column="1" />
+                android:layout_column="1"
+                android:text="Suspension" />
 
             <CheckBox
                 android:id="@+id/suspension_checkbox"
@@ -62,14 +62,14 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
 
             <TextView
-                android:text="Send relative time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_column="1" />
+                android:layout_column="1"
+                android:text="Send relative time" />
 
             <CheckBox
                 android:id="@+id/relative_time_checkbox"
@@ -85,10 +85,10 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:text="Minutes to cut"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_column="1" />
+                android:layout_column="1"
+                android:text="Minutes to cut" />
 
             <Spinner
                 android:id="@+id/minutes_to_cut"
@@ -102,10 +102,10 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:text="Metres to cut"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_column="1" />
+                android:layout_column="1"
+                android:text="Metres to cut" />
 
             <Spinner
                 android:id="@+id/metres_to_cut"
