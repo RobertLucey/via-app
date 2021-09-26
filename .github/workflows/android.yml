@@ -40,11 +40,6 @@ jobs:
           cache: 'gradle'
       - name: Build APK
         run: bash ./gradlew assembleRelease --stacktrace
-      - name: Upload APK
-        uses: actions/upload-artifact@v1
-        with:
-          name: apk
-          path: app/build/outputs/apk/release/app-release-unsigned.apk
       - name: Sign Android release
         uses: r0adkll/sign-android-release@v1
         with:
@@ -53,6 +48,11 @@ jobs:
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - name: Upload APK
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk
+          path: app/build/outputs/apk/release/app-release-unsigned-signed.apk
           
   release:
     name: Release APK
