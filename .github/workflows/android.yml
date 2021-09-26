@@ -81,4 +81,4 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: apk/app-release-unsigned.apk
           asset_name: Via.apk
-          asset_content_type: application/zip    
+          asset_content_type: application/apk
