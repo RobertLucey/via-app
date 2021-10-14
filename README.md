@@ -7,11 +7,6 @@ Road quality collection from cycling around. This only gathers and uploads data,
 
 Use a mount for the phone if you can for bikes.
 
-## Requirements
-
-- Must not have any power saving enabled on your phone. If there is power saving it means the gps can't be updated when the phone is asleep
-	- TODO find out if optimized and warn before starting services
-
 ## Features
 
 - Cuts off the first and last x minutes (configurable) from your ride so nobody knows where you're coming and going to by sharing your ride info
