@@ -1,5 +1,5 @@
-Android Road Quality Collector App
-==================================
+Via App
+=======
 
 <img src="/assets/logo.png" alt="via logo" style="height: 100px; width:100px;"/>
 
