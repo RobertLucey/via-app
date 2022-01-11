@@ -45,7 +45,6 @@ public class MainService extends Service {
     @Override
     public void onStart(Intent intent, int startId) {
         this.journey = new Journey();
-        this.journey.setTransportType(intent.getStringExtra("transportType"));
         this.journey.setSuspension(intent.getBooleanExtra("suspension", false));
         this.journey.setSendRelativeTime(intent.getBooleanExtra("sendRelativeTime", false));
         this.journey.setMinutesToCut(intent.getIntExtra("minutesToCut", 99999));

@@ -32,23 +32,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
-                android:text="Transport type" />
-
-            <Spinner
-                android:id="@+id/static_spinner"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
                 android:text="Suspension" />
 
             <CheckBox

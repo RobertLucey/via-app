@@ -34,7 +34,6 @@ public class Journey {
 
     public UUID uuid;
     private boolean isCulled;
-    public String transportType;
     public boolean suspension;
     private int minutesToCut;
     private int metresToCut;
@@ -87,7 +86,6 @@ public class Journey {
         if (!journeyJson.getString("uuid").equals("")) {
             journey.setUUID(UUID.fromString(journeyJson.getString("uuid")));
         }
-        journey.setTransportType(journeyJson.getString("transport_type"));
         journey.setSuspension(journeyJson.getBoolean("suspension"));
         journey.setSendRelativeTime(journeyJson.getBoolean("send_relative_time"));
         journey.setMinutesToCut(journeyJson.getInt("minutes_to_cut"));
@@ -293,7 +291,7 @@ public class Journey {
         data.put("uuid", this.uuid.toString());
         data.put("device", "phone");
         data.put("data", this.getDataJSON(simplify, sending));
-        data.put("transport_type", this.transportType);
+        data.put("transport_type", "Bike");
         data.put("suspension", this.suspension);
         data.put("is_partial", this.sendInPartials);
 
@@ -330,7 +328,6 @@ public class Journey {
                     inbetween = false;
 
                     Journey journey = new Journey();
-                    journey.setTransportType(this.transportType);
                     journey.setSuspension(this.suspension);
                     journeys.add(journey);
                 } else {
@@ -387,10 +384,6 @@ public class Journey {
 
     public void setUUID(UUID uuid) {
         this.uuid = uuid;
-    }
-
-    public void setTransportType(String transportType) {
-        this.transportType = transportType;
     }
 
     public void setSuspension(boolean suspension) {

@@ -32,16 +32,6 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        Spinner transportTypeSpinner = binding.staticSpinner;
-        ArrayAdapter<CharSequence> transportTypeAdapter = ArrayAdapter.createFromResource(
-                getActivity(),
-                R.array.transport_type,
-                android.R.layout.simple_spinner_item
-        );
-        transportTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        transportTypeSpinner.setAdapter(transportTypeAdapter);
-
-
         Spinner minutesToCutSpinner = binding.minutesToCut;
         ArrayAdapter<CharSequence> minutesToCutAdapter = ArrayAdapter.createFromResource(
                 getActivity(),
@@ -82,7 +72,6 @@ public class HomeFragment extends Fragment {
 
                 startStop.setText("STOP");
 
-                String transportType = transportTypeSpinner.getSelectedItem().toString();
                 boolean suspension = suspensionCheckbox.isChecked();
                 boolean sendRelativeTime = relativeTimeCheckbox.isChecked();
                 boolean sendPartials = sendPartialsCheckbox.isChecked();
@@ -90,7 +79,7 @@ public class HomeFragment extends Fragment {
                 int metresToCut = Integer.parseInt(metresToCutSpinner.getSelectedItem().toString());
 
                 Intent mainService = new Intent(getActivity(), MainService.class);
-                mainService.putExtra("transportType", transportType);
+                mainService.putExtra("transportType", "Bike");
                 mainService.putExtra("suspension", suspension);
                 mainService.putExtra("sendRelativeTime", sendRelativeTime);
                 mainService.putExtra("minutesToCut", minutesToCut);
