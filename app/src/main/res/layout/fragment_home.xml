@@ -6,134 +6,99 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
+
+    <TextView
+        android:id="@+id/minutesToCutTextView"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginLeft="44dp"
+        android:layout_marginTop="100dp"
+
+        android:text="Minutes to cut"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- The two top/bottom constraints align it horizontally with the TextView -->
+    <com.google.android.material.slider.Slider
+        android:id="@+id/minutesToCutSlider"
+
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginLeft="92dp"
+
+        app:layout_constraintLeft_toRightOf="@+id/minutesToCutTextView"
+        app:layout_constraintTop_toTopOf="@+id/minutesToCutTextView"
+        app:layout_constraintBottom_toBottomOf="@+id/minutesToCutTextView"
+
+        android:value="50.0"
+        android:valueFrom="0.0"
+        android:valueTo="100.0"/>
+
+
+    <!-- Metres to cut off: -->
+    <TextView
+        android:id="@+id/metresToCutTextView"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="100dp"
+
+        android:text="Minutes to cut"
+        app:layout_constraintLeft_toLeftOf="@+id/minutesToCutTextView"
+        app:layout_constraintTop_toTopOf="@+id/minutesToCutTextView" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/metresToCutSlider"
+
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginLeft="92dp"
+
+        app:layout_constraintLeft_toRightOf="@+id/metresToCutTextView"
+        app:layout_constraintTop_toTopOf="@+id/metresToCutTextView"
+        app:layout_constraintBottom_toBottomOf="@+id/metresToCutTextView"
+
+        android:value="200.0"
+        android:valueFrom="0.0"
+        android:valueTo="500.0"/>
+
+            <TextView
+                android:id="@+id/enhancedPrivacyTextView"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="100dp"
+                app:layout_constraintRight_toRightOf="@+id/metresToCutTextView"
+                app:layout_constraintTop_toBottomOf="@+id/metresToCutTextView"
+                android:text="Enhanced Privacy" />
+
+            <CheckBox
+                android:id="@+id/enhancedPrivacyCheckBox"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                app:layout_constraintLeft_toLeftOf="@+id/metresToCutSlider"
+                app:layout_constraintBottom_toBottomOf="@+id/enhancedPrivacyTextView"
+                app:layout_constraintTop_toTopOf="@+id/enhancedPrivacyTextView"/>
+
+
+
     <Button
         android:id="@+id/start_stop_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginBottom="150dp"
-        android:text="START"
+        android:layout_height="48dp"
+        android:layout_marginBottom="100dp"
+        android:text="Start Journey"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TableLayout
-        android:layout_width="334dp"
-        android:layout_height="231dp"
-        android:layout_marginBottom="200dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:text="Transport type" />
-
-            <Spinner
-                android:id="@+id/static_spinner"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:text="Suspension" />
-
-            <CheckBox
-                android:id="@+id/suspension_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:text="Send relative time" />
-
-            <CheckBox
-                android:id="@+id/relative_time_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:text="Minutes to cut" />
-
-            <Spinner
-                android:id="@+id/minutes_to_cut"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:text="Metres to cut" />
-
-            <Spinner
-                android:id="@+id/metres_to_cut"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:text="Send in partials" />
-
-            <CheckBox
-                android:id="@+id/send_in_partials"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </TableRow>
-
-    </TableLayout>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

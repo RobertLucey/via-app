@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment;
 import com.example.roadquality.R;
 import com.example.roadquality.databinding.FragmentHomeBinding;
 import com.example.roadquality.services.MainService;
+import com.google.android.material.slider.LabelFormatter;
+import com.google.android.material.slider.Slider;
 
 
 public class HomeFragment extends Fragment {
@@ -32,66 +34,41 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        Spinner transportTypeSpinner = binding.staticSpinner;
-        ArrayAdapter<CharSequence> transportTypeAdapter = ArrayAdapter.createFromResource(
-                getActivity(),
-                R.array.transport_type,
-                android.R.layout.simple_spinner_item
-        );
-        transportTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        transportTypeSpinner.setAdapter(transportTypeAdapter);
+        // Set a LabelFormatter on the Sliders to not show ugly floats.
+        Slider minutesToCutSlider = binding.minutesToCutSlider;
+        Slider metresToCutSlider = binding.metresToCutSlider;
+
+        LabelFormatter sliderInputLabelFormatter = new LabelFormatter() {
+            @NonNull
+            @Override
+            public String getFormattedValue(float value) {
+                return String.valueOf(Math.round(value));
+            }
+        };
+        minutesToCutSlider.setLabelFormatter(sliderInputLabelFormatter);
+        metresToCutSlider.setLabelFormatter(sliderInputLabelFormatter);
 
 
-        Spinner minutesToCutSpinner = binding.minutesToCut;
-        ArrayAdapter<CharSequence> minutesToCutAdapter = ArrayAdapter.createFromResource(
-                getActivity(),
-                R.array.minutes_to_cut,
-                android.R.layout.simple_spinner_item
-        );
-        minutesToCutAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        minutesToCutSpinner.setAdapter(minutesToCutAdapter);
-
-
-        Spinner metresToCutSpinner = binding.metresToCut;
-        ArrayAdapter<CharSequence> metresToCutAdapter = ArrayAdapter.createFromResource(
-                getActivity(),
-                R.array.metres_to_cut,
-                android.R.layout.simple_spinner_item
-        );
-        metresToCutAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        metresToCutSpinner.setAdapter(metresToCutAdapter);
-
-
-        CheckBox suspensionCheckbox = binding.suspensionCheckbox;
-        CheckBox relativeTimeCheckbox = binding.relativeTimeCheckbox;
-        relativeTimeCheckbox.setChecked(true);
-        CheckBox sendPartialsCheckbox = binding.sendInPartials;
+        // "Enhanced Privacy" is simply sending partials and relative times.
+        CheckBox enhancedPrivacyCheckbox = binding.enhancedPrivacyCheckBox;
 
         Button startStop = root.findViewById(R.id.start_stop_button);
-
-        // If we send partials we should never send relative time
-        sendPartialsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                relativeTimeCheckbox.setChecked(false);
-            }
-        });
 
         final Button button = binding.startStopButton;
         button.setOnClickListener(v -> {
             if (!running) {
 
-                startStop.setText("STOP");
+                startStop.setText("Stop Journey");
 
-                String transportType = transportTypeSpinner.getSelectedItem().toString();
-                boolean suspension = suspensionCheckbox.isChecked();
-                boolean sendRelativeTime = relativeTimeCheckbox.isChecked();
-                boolean sendPartials = sendPartialsCheckbox.isChecked();
-                int minutesToCut = Integer.parseInt(minutesToCutSpinner.getSelectedItem().toString());
-                int metresToCut = Integer.parseInt(metresToCutSpinner.getSelectedItem().toString());
+                String transportType = "bike";
+                boolean sendRelativeTime = enhancedPrivacyCheckbox.isChecked();
+                boolean sendPartials = enhancedPrivacyCheckbox.isChecked();
+                int minutesToCut = Math.round(minutesToCutSlider.getValue());
+                int metresToCut = Math.round(metresToCutSlider.getValue());
 
                 Intent mainService = new Intent(getActivity(), MainService.class);
                 mainService.putExtra("transportType", transportType);
-                mainService.putExtra("suspension", suspension);
+                mainService.putExtra("suspension", Boolean.FALSE);
                 mainService.putExtra("sendRelativeTime", sendRelativeTime);
                 mainService.putExtra("minutesToCut", minutesToCut);
                 mainService.putExtra("metresToCut", metresToCut);
@@ -104,7 +81,7 @@ public class HomeFragment extends Fragment {
             } else {
                 getActivity().stopService(new Intent(getActivity(), MainService.class));
                 running = false;
-                startStop.setText("START");
+                startStop.setText("Start Journey");
             }
         });
 
