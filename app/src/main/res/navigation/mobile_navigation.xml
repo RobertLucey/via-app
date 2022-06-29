@@ -11,4 +11,9 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
+    <fragment
+        android:id="@+id/navigation_web_view"
+        android:name="com.example.roadquality.ui.home.WebViewFragment"
+        android:label="View Map"
+        tools:layout="@layout/fragment_web_view" />
 </navigation>
