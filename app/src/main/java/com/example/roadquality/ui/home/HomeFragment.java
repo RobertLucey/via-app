@@ -48,7 +48,6 @@ public class HomeFragment extends Fragment {
         minutesToCutSlider.setLabelFormatter(sliderInputLabelFormatter);
         metresToCutSlider.setLabelFormatter(sliderInputLabelFormatter);
 
-
         // "Enhanced Privacy" is simply sending partials and relative times.
         CheckBox enhancedPrivacyCheckbox = binding.enhancedPrivacyCheckBox;
 
@@ -57,7 +56,6 @@ public class HomeFragment extends Fragment {
         final Button button = binding.startStopButton;
         button.setOnClickListener(v -> {
             if (!running) {
-
                 startStop.setText("Stop Journey");
 
                 String transportType = "bike";

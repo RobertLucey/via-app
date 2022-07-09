@@ -71,7 +71,6 @@ public class MainService extends Service {
         );
 
         accelerometerSensor.start();
-
     }
 
     @Override
@@ -124,5 +123,4 @@ public class MainService extends Service {
 
         super.onDestroy();
     }
-
 }
