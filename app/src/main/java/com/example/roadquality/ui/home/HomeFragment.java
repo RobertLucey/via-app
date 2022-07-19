@@ -1,7 +1,10 @@
 package com.example.roadquality.ui.home;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +22,57 @@ import com.example.roadquality.services.MainService;
 import com.google.android.material.slider.LabelFormatter;
 import com.google.android.material.slider.Slider;
 
+import java.util.logging.Logger;
+
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
+
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private boolean running = false;
+
+    // Necessary for EasyPermissions to work right.
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Forward results to EasyPermissions
+
+        Log.println(Log.ASSERT, "s", "Permissions:");
+        for (int i = 0; i < permissions.length; i++) {
+            Log.println(Log.ASSERT, "s", permissions[i]);
+        }
+
+        Log.println(Log.ASSERT, "s", "grant results:");
+        for (int i = 0; i < grantResults.length; i++) {
+            Log.println(Log.ASSERT, "s", String.valueOf(grantResults[i]));
+        }
+
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @AfterPermissionGranted(109)
+    private void verifyStorageLocationPermissions() {
+        String[] perms = {
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        };
+
+        if (!EasyPermissions.hasPermissions(this.getActivity(), perms)) {
+            EasyPermissions.requestPermissions(
+                    this,
+                    "Please grant the following permission for via to function",
+                    109,
+                    perms
+            );
+        } else {
+            Log.println(Log.ASSERT, "s", "HAVE PERMS");
+        }
+    }
+
 
     public View onCreateView(
             @NonNull LayoutInflater inflater,
@@ -56,6 +105,8 @@ public class HomeFragment extends Fragment {
         final Button button = binding.startStopButton;
         button.setOnClickListener(v -> {
             if (!running) {
+                verifyStorageLocationPermissions();
+
                 startStop.setText("Stop Journey");
 
                 String transportType = "bike";
