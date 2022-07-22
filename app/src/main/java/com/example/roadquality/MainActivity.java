@@ -24,6 +24,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.roadquality.databinding.ActivityMainBinding;
+import com.example.roadquality.utils.LokiLogger;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityTransition;
 import com.google.android.gms.location.ActivityTransitionRequest;
@@ -37,11 +38,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import pl.mjaron.tinyloki.ILogStream;
+import pl.mjaron.tinyloki.LogController;
+import pl.mjaron.tinyloki.TinyLoki;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+
+    private LokiLogger logger = null;
 
     private static int permissionsRequestCode = 40;
     private static String[] perms = {
@@ -187,8 +193,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         Task<Void> task = ActivityRecognition.getClient(this)
                 .requestActivityTransitionUpdates(request, pendingIntent);
-
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,6 +203,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         // It would be nice to make this work but it just messes up the sizing on the app fragments.
         // makeFullScreen();
+
+        this.logger = new LokiLogger();
 
         if (!hasRequiredPermissions()) {
             this.requestRequiredPermissions();
@@ -223,4 +231,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         NavigationUI.setupWithNavController(navView, navController);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.logger.close();
+    }
 }
