@@ -68,43 +68,6 @@ public class SettingsFragment extends Fragment {
         minutesToCutSlider.setLabelFormatter(sliderInputLabelFormatter);
         metresToCutSlider.setLabelFormatter(sliderInputLabelFormatter);
 
-
-
-        // TODO: not yet refactored
-        Button startStop = root.findViewById(R.id.start_stop_button);
-
-        final Button button = binding.startStopButton;
-        button.setOnClickListener(v -> {
-            /*
-            if (!running) {
-                startStop.setText("Stop Journey");
-
-                String transportType = "bike";
-                boolean sendRelativeTime = enhancedPrivacyCheckbox.isChecked();
-                boolean sendPartials = enhancedPrivacyCheckbox.isChecked();
-                int minutesToCut = Math.round(minutesToCutSlider.getValue());
-                int metresToCut = Math.round(metresToCutSlider.getValue());
-
-                Intent mainService = new Intent(getActivity(), MainService.class);
-                mainService.putExtra("transportType", transportType);
-                mainService.putExtra("suspension", Boolean.FALSE);
-                mainService.putExtra("sendRelativeTime", sendRelativeTime);
-                mainService.putExtra("minutesToCut", minutesToCut);
-                mainService.putExtra("metresToCut", metresToCut);
-                mainService.putExtra("sendPartials", sendPartials);
-
-                // DELETE ON SEND? - not really important
-
-                getActivity().startForegroundService(mainService);
-                running = true;
-            } else {
-                getActivity().stopService(new Intent(getActivity(), MainService.class));
-                running = false;
-                startStop.setText("Start Journey");
-            }
-             */
-        });
-
         return root;
     }
 

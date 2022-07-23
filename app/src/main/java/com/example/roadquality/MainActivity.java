@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         intent.setAction(AutomaticJourneyCreator.INTENT_ACTION);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent,
-                PendingIntent.FLAG_IMMUTABLE);
+                PendingIntent.FLAG_MUTABLE);
 
         Task<Void> task = ActivityRecognition.getClient(this)
                 .requestActivityTransitionUpdates(request, pendingIntent);

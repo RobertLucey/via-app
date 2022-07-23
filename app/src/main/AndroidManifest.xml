@@ -16,8 +16,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- Do you need both? -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 
     <!-- This networkSecurityConfig is needed for logging to Loki -->
@@ -39,7 +37,7 @@
             android:name=".AutomaticJourneyCreator"
             android:enabled="true"
             android:exported="true"
-            android:permission="com.google.android.gms.permission.ACTIVITY_RECOGNITION">
+            android:permission="android.permission.ACTIVITY_RECOGNITION">
             <intent-filter>
                 <action android:name="com.example.roadquality.ACTION_PROCESS_ACTIVITY_TRANSITIONS"/>
             </intent-filter>
