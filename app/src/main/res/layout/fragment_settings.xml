@@ -74,7 +74,7 @@
         android:layout_height="wrap_content"
 
         android:layout_marginTop="100dp"
-        app:layout_constraintRight_toRightOf="@+id/metresToCutTextView"
+        app:layout_constraintLeft_toLeftOf="@+id/metresToCutTextView"
         app:layout_constraintTop_toBottomOf="@+id/metresToCutTextView"
         android:text="Enhanced Privacy" />
 
@@ -87,16 +87,5 @@
         app:layout_constraintLeft_toLeftOf="@+id/metresToCutSlider"
         app:layout_constraintBottom_toBottomOf="@+id/enhancedPrivacyTextView"
         app:layout_constraintTop_toTopOf="@+id/enhancedPrivacyTextView"/>
-
-
-    <Button
-        android:id="@+id/start_stop_button"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginBottom="100dp"
-        android:text="Start Journey"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
