@@ -21,12 +21,15 @@ import com.example.roadquality.models.AccelerometerPoint;
 import com.example.roadquality.models.DataPoint;
 import com.example.roadquality.models.GPSPoint;
 import com.example.roadquality.models.Journey;
+import com.example.roadquality.utils.LokiLogger;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 
 public class MainService extends Service {
+    private LokiLogger logger = new LokiLogger();
+    private static final String TAG = "MainService";
 
     LocationManager locationManager;
     LocationService locationService;
@@ -44,7 +47,9 @@ public class MainService extends Service {
 
     @Override
     public void onStart(Intent intent, int startId) {
+        logger.log(TAG, "onStart fired...");
         this.journey = new Journey();
+        logger.log(TAG, "new Journey() created...");
         this.journey.setTransportType(intent.getStringExtra("transportType"));
         this.journey.setSuspension(intent.getBooleanExtra("suspension", false));
         this.journey.setSendRelativeTime(intent.getBooleanExtra("sendRelativeTime", false));
@@ -60,6 +65,7 @@ public class MainService extends Service {
                 && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED) {
+            logger.log(TAG, "Thinks we don't have permission. Killing :(", 100);
             return;
         }
         this.locationService = new LocationService(this, journey);
@@ -71,13 +77,14 @@ public class MainService extends Service {
         );
 
         accelerometerSensor.start();
-
+        logger.log(TAG, "onStart finished!");
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+        logger.log(TAG, "onCreate started...");
         accelerometerSensor = new AccelerometerSensor(this) {
             @Override
             public void onUpdate(Vector3D a, Vector3D g) {
@@ -92,6 +99,7 @@ public class MainService extends Service {
                 }
             }
         };
+        logger.log(TAG, "Got accelerometerSensor");
 
         String CHANNEL_ID = "road_quality";
         NotificationChannel channel = new NotificationChannel(
@@ -112,17 +120,21 @@ public class MainService extends Service {
 
     @Override
     public void onDestroy() {
+        logger.log(TAG, "onDestroy started...");
         this.locationManager.removeUpdates(this.locationService);
         accelerometerSensor.stop();
 
         try {
+            logger.log(TAG, "saving journey...");
             this.journey.save();
+            logger.log(TAG, "Journey saved");
             this.journey.send(true);
+            logger.log(TAG, "Journey sent!", 60);
         } catch (IOException | JSONException e) {
+            logger.log(TAG, "journey save/send error hit :(" + e.toString() + " " + e.getMessage(), 100);
             e.printStackTrace();
         }
 
         super.onDestroy();
     }
-
 }

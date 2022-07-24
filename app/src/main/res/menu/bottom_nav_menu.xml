@@ -5,8 +5,14 @@
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/title_home" />
+
     <item
         android:id="@+id/navigation_web_view"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/ic_baseline_map_24"
         android:title="View Map" />
+
+    <item
+        android:id="@+id/navigation_settings_view"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="Settings" />
 </menu>
