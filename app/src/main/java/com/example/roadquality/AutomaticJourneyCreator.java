@@ -46,11 +46,12 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
 
     private void startCycleJourney(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("Via Preferences", MODE_PRIVATE);
+        logger.log("Got sharedPrefs in startCycleJourney");
         Boolean enhancedPrivacy = sharedPreferences.getBoolean("enhancedPrivacy", false);
-        float metresToCut = sharedPreferences.getFloat("metresToCut", 100);
-        float minutesToCut = sharedPreferences.getFloat("minutesToCut", 1);
+        int metresToCut = sharedPreferences.getInt("metresToCut", 100);
+        int minutesToCut = sharedPreferences.getInt("minutesToCut", 1);
 
-        Intent mainService = new Intent(context, MainService.class);
+        Intent mainService = new Intent(context.getApplicationContext(), MainService.class);
         mainService.putExtra("transportType", "bike");
         mainService.putExtra("suspension", Boolean.FALSE);
         mainService.putExtra("sendRelativeTime", enhancedPrivacy);
@@ -58,12 +59,13 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
         mainService.putExtra("metresToCut", metresToCut);
         mainService.putExtra("sendPartials", enhancedPrivacy);
 
-        context.startForegroundService(mainService);
+        logger.log("Created intent in startCycleJourney");
+        context.getApplicationContext().startService(mainService);
         logger.log("Started bike journey!");
     }
 
     private void stopCycleJourney(Context context) {
-        context.stopService(new Intent(context, MainService.class));
+        context.getApplicationContext().stopService(new Intent(context.getApplicationContext(), MainService.class));
         logger.log("Stopped bike journey!");
     }
 
@@ -86,7 +88,11 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
                                     "Cycle started."
                             );
 
-                            startCycleJourney(context);
+                            try {
+                                startCycleJourney(context);
+                            } catch (Exception exception) {
+                                logger.log("startCycleJourney threw! " + exception.toString());
+                            }
                         } else {
                             logger.log(
                                     "AutomaticJourneyCreator",

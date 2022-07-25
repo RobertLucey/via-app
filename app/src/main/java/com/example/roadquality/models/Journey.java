@@ -5,6 +5,7 @@ import android.os.Environment;
 import androidx.annotation.NonNull;
 
 import com.example.roadquality.BuildConfig;
+import com.example.roadquality.utils.LokiLogger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +42,8 @@ public class Journey {
     private boolean sendRelativeTime;
     public ArrayList<DataPoint> frames = new ArrayList();
     public boolean sendInPartials;
+
+    private LokiLogger logger = new LokiLogger();
 
     public Journey() {
         this.uuid = UUID.randomUUID();
@@ -154,7 +157,7 @@ public class Journey {
 
         for (DataPoint frame : this.frames) {
             if (frame.gpsPoint.isPopulated()) {
-                System.out.println(frame.gpsPoint.getJSON(true).toString());
+                this.logger.log("Journey", frame.gpsPoint.getJSON(true).toString());
             }
         }
 
@@ -223,7 +226,7 @@ public class Journey {
         if (this.cull()) {
 
             if (this.frames.size() == 0) {
-                System.out.println("No frames after cull so not sending");
+                this.logger.log("Journey", "No frames after cull so not sending");
             } else {
                 if (this.sendInPartials) {
                     for (Journey partialJourney : this.getPartials().journeys) {
@@ -231,6 +234,7 @@ public class Journey {
                         partialJourney.send(true);
                     }
                 } else {
+                    this.logger.log("Journey", "Posting up");
                     this.postData(
                             this.getJSON(true, true).toString(),
                             removeOnSuccess
@@ -238,7 +242,7 @@ public class Journey {
                 }
             }
         } else {
-            System.out.println("Could not cull so not bothering to send");
+            this.logger.log("Journey", "Could not cull so not bothering to send");
         }
     }
 
@@ -257,6 +261,7 @@ public class Journey {
         call.enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
+                new LokiLogger().log("Journey", "postData got response: " + response.toString());
                 if (removeOnSuccess) {
                     if (response.code() == 201 || response.code() == 200) {
                         new File(filePath).delete();
@@ -266,7 +271,7 @@ public class Journey {
 
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                e.printStackTrace();
+                new LokiLogger().log("Journey", "Post failure: " + e.toString());
             }
         });
     }

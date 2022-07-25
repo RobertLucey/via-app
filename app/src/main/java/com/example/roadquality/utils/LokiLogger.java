@@ -24,8 +24,6 @@ public class LokiLogger {
             .l("source", "Via App")
             .l("version", "0.0.2")  // TODO: Use proper versioning.
         );
-
-        this.lokiLogStream.log("lokiLogStream initialized.");
     }
 
     public void close() {

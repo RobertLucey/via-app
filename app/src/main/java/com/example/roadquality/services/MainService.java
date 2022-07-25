@@ -117,7 +117,6 @@ public class MainService extends Service {
         startForeground(1, notification);
     }
 
-
     @Override
     public void onDestroy() {
         logger.log(TAG, "onDestroy started...");
