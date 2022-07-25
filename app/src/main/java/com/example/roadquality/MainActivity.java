@@ -41,16 +41,17 @@ import java.util.List;
 import pl.mjaron.tinyloki.ILogStream;
 import pl.mjaron.tinyloki.LogController;
 import pl.mjaron.tinyloki.TinyLoki;
+import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
-    private LokiLogger logger = null;
+    private LokiLogger logger = new LokiLogger();
 
-    private static int permissionsRequestCode = 40;
-    private static String[] perms = {
+    private static final int permissionsRequestCode = 40;
+    private static final String[] perms = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_BACKGROUND_LOCATION,
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -187,17 +189,22 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         return transitions;
     }
 
+    @AfterPermissionGranted(permissionsRequestCode)
     private void setUpActivityTransitionBroadcastReceiver() {
-        ActivityTransitionRequest request = new ActivityTransitionRequest(this.getActivityTransitionsList());
+        if (this.hasRequiredPermissions()) {
+            ActivityTransitionRequest request = new ActivityTransitionRequest(this.getActivityTransitionsList());
 
-        Intent intent = new Intent(this, AutomaticJourneyCreator.class);
-        intent.setAction(AutomaticJourneyCreator.INTENT_ACTION);
+            Intent intent = new Intent(this, AutomaticJourneyCreator.class);
+            intent.setAction(AutomaticJourneyCreator.INTENT_ACTION);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent,
-                PendingIntent.FLAG_MUTABLE);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent,
+                    PendingIntent.FLAG_MUTABLE);
 
-        Task<Void> task = ActivityRecognition.getClient(this)
-                .requestActivityTransitionUpdates(request, pendingIntent);
+            Task<Void> task = ActivityRecognition.getClient(this)
+                    .requestActivityTransitionUpdates(request, pendingIntent);
+        } else {
+            this.requestRequiredPermissions();
+        }
     }
 
     @Override
@@ -208,15 +215,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         // It would be nice to make this work but it just messes up the sizing on the app fragments.
         // makeFullScreen();
-
-        this.logger = new LokiLogger();
-
-        if (!hasRequiredPermissions()) {
-            this.requestRequiredPermissions();
-        }
-
-        this.setUpActivityTransitionBroadcastReceiver();
-
 
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -234,6 +232,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        this.setUpActivityTransitionBroadcastReceiver();
     }
 
     @Override
