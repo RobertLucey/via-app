@@ -22,7 +22,7 @@ import com.google.android.gms.location.DetectedActivity;
 import java.util.List;
 
 public class AutomaticJourneyCreator extends BroadcastReceiver {
-    private LokiLogger logger = new LokiLogger();
+    private LokiLogger logger = new LokiLogger("AutomaticJourneyCreator.java");
 
     public static final String INTENT_ACTION = "com.example.roadquality.ACTION_PROCESS_ACTIVITY_TRANSITIONS";
 
@@ -71,8 +71,11 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        this.logger.log("Received an intent...");
+
         if (intent != null && INTENT_ACTION.equals(intent.getAction())) {
             if (ActivityTransitionResult.hasResult(intent)) {
+                logger.log("Got a usable result from the intent");
                 ActivityTransitionResult intentResult = ActivityTransitionResult
                         .extractResult(intent);
                 List<ActivityTransitionEvent> transitionEvents = intentResult.getTransitionEvents();
@@ -81,25 +84,32 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
                     ActivityTransitionEvent transitionEvent = transitionEvents.get(i);
                     int transitionType = transitionEvent.getTransitionType();
 
-                    if (transitionEvent.getActivityType() == DetectedActivity.ON_BICYCLE) {
+                    logger.log(
+                            "activity=" + transitionEvent.getTransitionType() + " transitionType=" + transitionType
+                    );
+
+                    if (transitionEvent.getActivityType() != DetectedActivity.STILL) {
                         if (transitionEvent.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                             logger.log(
-                                    "AutomaticJourneyCreator",
                                     "Cycle started."
                             );
 
                             try {
+                                logger.log("Trying to start cycle journey...");
                                 startCycleJourney(context);
+                                logger.log("Started cycle journey successfully");
                             } catch (Exception exception) {
                                 logger.log("startCycleJourney threw! " + exception.toString());
                             }
                         } else {
                             logger.log(
-                                    "AutomaticJourneyCreator",
-                                    "Cycle finished."
+                                    "Cycle finished. Trying to stop Cycle journey"
                             );
 
                             stopCycleJourney(context);
+                            logger.log(
+                                    "Stopped cycle journey successfully"
+                            );
                         }
                     }
 

@@ -28,8 +28,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 public class MainService extends Service {
-    private LokiLogger logger = new LokiLogger();
-    private static final String TAG = "MainService";
+    private LokiLogger logger = new LokiLogger("MainService.java");
 
     LocationManager locationManager;
     LocationService locationService;
@@ -42,14 +41,15 @@ public class MainService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        logger.log("onBind called and it's not implemented! Hard fail.");
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public void onStart(Intent intent, int startId) {
-        logger.log(TAG, "onStart fired...");
+        logger.log("onStart fired...");
         this.journey = new Journey();
-        logger.log(TAG, "new Journey() created...");
+        logger.log("new Journey() created...");
         this.journey.setTransportType(intent.getStringExtra("transportType"));
         this.journey.setSuspension(intent.getBooleanExtra("suspension", false));
         this.journey.setSendRelativeTime(intent.getBooleanExtra("sendRelativeTime", false));
@@ -65,7 +65,7 @@ public class MainService extends Service {
                 && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED) {
-            logger.log(TAG, "Thinks we don't have permission. Killing :(", 100);
+            logger.log("Thinks we don't have permission. Killing :(");
             return;
         }
         this.locationService = new LocationService(this, journey);
@@ -77,14 +77,14 @@ public class MainService extends Service {
         );
 
         accelerometerSensor.start();
-        logger.log(TAG, "onStart finished!");
+        logger.log("onStart finished!");
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        logger.log(TAG, "onCreate started...");
+        logger.log("onCreate started...");
         accelerometerSensor = new AccelerometerSensor(this) {
             @Override
             public void onUpdate(Vector3D a, Vector3D g) {
@@ -99,7 +99,7 @@ public class MainService extends Service {
                 }
             }
         };
-        logger.log(TAG, "Got accelerometerSensor");
+        logger.log("Got accelerometerSensor");
 
         String CHANNEL_ID = "road_quality";
         NotificationChannel channel = new NotificationChannel(
@@ -119,18 +119,18 @@ public class MainService extends Service {
 
     @Override
     public void onDestroy() {
-        logger.log(TAG, "onDestroy started...");
+        logger.log("onDestroy started...");
         this.locationManager.removeUpdates(this.locationService);
         accelerometerSensor.stop();
 
         try {
-            logger.log(TAG, "saving journey...");
+            logger.log("saving journey...");
             this.journey.save();
-            logger.log(TAG, "Journey saved");
+            logger.log("Journey saved");
             this.journey.send(true);
-            logger.log(TAG, "Journey sent!", 60);
+            logger.log("Journey sent!");
         } catch (IOException | JSONException e) {
-            logger.log(TAG, "journey save/send error hit :(" + e.toString() + " " + e.getMessage(), 100);
+            logger.log("journey save/send error hit :(" + e.toString() + " " + e.getMessage());
             e.printStackTrace();
         }
 
