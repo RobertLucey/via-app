@@ -11,8 +11,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.IBinder;
+import android.os.Looper;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
@@ -22,6 +25,13 @@ import com.example.roadquality.models.DataPoint;
 import com.example.roadquality.models.GPSPoint;
 import com.example.roadquality.models.Journey;
 import com.example.roadquality.utils.LokiLogger;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
 
@@ -45,6 +55,7 @@ public class MainService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
     public void onStart(Intent intent, int startId) {
         logger.log("onStart fired...");
@@ -53,8 +64,8 @@ public class MainService extends Service {
         this.journey.setTransportType(intent.getStringExtra("transportType"));
         this.journey.setSuspension(intent.getBooleanExtra("suspension", false));
         this.journey.setSendRelativeTime(intent.getBooleanExtra("sendRelativeTime", false));
-        this.journey.setMinutesToCut(intent.getIntExtra("minutesToCut", 99999));
-        this.journey.setMetresToCut(intent.getIntExtra("metresToCut", 99999));
+        this.journey.setMinutesToCut(intent.getIntExtra("minutesToCut", 0));
+        this.journey.setMetresToCut(intent.getIntExtra("metresToCut", 0));
         this.journey.setSendInPartials(intent.getBooleanExtra("sendPartials", true));
 
         this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -68,12 +79,24 @@ public class MainService extends Service {
             logger.log("Thinks we don't have permission. Killing :(");
             return;
         }
+
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(1000);
+        locationRequest.setFastestInterval(500);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+        SettingsClient client = LocationServices.getSettingsClient(this);
+        FusedLocationProviderClient fusedClient = LocationServices.getFusedLocationProviderClient(this);
+
+        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+
         this.locationService = new LocationService(this, journey);
-        this.locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                2000,
-                1,
-                this.locationService
+
+        fusedClient.requestLocationUpdates(
+                locationRequest,
+                this.locationService,
+                Looper.getMainLooper()
         );
 
         accelerometerSensor.start();
@@ -121,6 +144,7 @@ public class MainService extends Service {
     public void onDestroy() {
         logger.log("onDestroy started...");
         this.locationManager.removeUpdates(this.locationService);
+        LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(this.locationService);
         accelerometerSensor.stop();
 
         try {

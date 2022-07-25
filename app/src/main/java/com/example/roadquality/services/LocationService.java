@@ -8,17 +8,26 @@ import com.example.roadquality.models.AccelerometerPoint;
 import com.example.roadquality.models.DataPoint;
 import com.example.roadquality.models.GPSPoint;
 import com.example.roadquality.models.Journey;
+import com.example.roadquality.utils.LokiLogger;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
 
 import java.time.Instant;
 import java.util.List;
 
-public class LocationService implements LocationListener {
+public class LocationService extends LocationCallback implements LocationListener {
+    LokiLogger logger = new LokiLogger("LocationService.java");
     Context context;
     Journey journey;
 
     LocationService(Context context, Journey journey) {
         this.context = context;
         this.journey = journey;
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        logger.log("Provider " + provider + " disabled");
     }
 
     @Override
@@ -33,5 +42,15 @@ public class LocationService implements LocationListener {
                         Instant.now().toEpochMilli() / 1000L
                 )
         );
+    }
+
+    public void onLocationResult(LocationResult locationResult) {
+        if (locationResult == null) {
+            return;
+        }
+
+        for (Location l : locationResult.getLocations()) {
+            this.onLocationChanged(l);
+        }
     }
 }

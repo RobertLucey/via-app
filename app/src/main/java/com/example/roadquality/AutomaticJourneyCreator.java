@@ -88,7 +88,7 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
                             "activity=" + transitionEvent.getTransitionType() + " transitionType=" + transitionType
                     );
 
-                    if (transitionEvent.getActivityType() != DetectedActivity.STILL) {
+                    if (transitionEvent.getActivityType() == DetectedActivity.ON_BICYCLE) {
                         if (transitionEvent.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                             logger.log(
                                     "Cycle started."
