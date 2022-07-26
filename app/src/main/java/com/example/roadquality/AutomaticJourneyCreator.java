@@ -22,7 +22,7 @@ import com.google.android.gms.location.DetectedActivity;
 import java.util.List;
 
 public class AutomaticJourneyCreator extends BroadcastReceiver {
-    private LokiLogger logger = new LokiLogger();
+    private LokiLogger logger = new LokiLogger("AutomaticJourneyCreator.java");
 
     public static final String INTENT_ACTION = "com.example.roadquality.ACTION_PROCESS_ACTIVITY_TRANSITIONS";
 
@@ -46,11 +46,12 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
 
     private void startCycleJourney(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("Via Preferences", MODE_PRIVATE);
+        logger.log("Got sharedPrefs in startCycleJourney");
         Boolean enhancedPrivacy = sharedPreferences.getBoolean("enhancedPrivacy", false);
-        float metresToCut = sharedPreferences.getFloat("metresToCut", 100);
-        float minutesToCut = sharedPreferences.getFloat("minutesToCut", 1);
+        int metresToCut = sharedPreferences.getInt("metresToCut", 100);
+        int minutesToCut = sharedPreferences.getInt("minutesToCut", 1);
 
-        Intent mainService = new Intent(context, MainService.class);
+        Intent mainService = new Intent(context.getApplicationContext(), MainService.class);
         mainService.putExtra("transportType", "bike");
         mainService.putExtra("suspension", Boolean.FALSE);
         mainService.putExtra("sendRelativeTime", enhancedPrivacy);
@@ -58,19 +59,23 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
         mainService.putExtra("metresToCut", metresToCut);
         mainService.putExtra("sendPartials", enhancedPrivacy);
 
-        context.startForegroundService(mainService);
+        logger.log("Created intent in startCycleJourney");
+        context.getApplicationContext().startService(mainService);
         logger.log("Started bike journey!");
     }
 
     private void stopCycleJourney(Context context) {
-        context.stopService(new Intent(context, MainService.class));
+        context.getApplicationContext().stopService(new Intent(context.getApplicationContext(), MainService.class));
         logger.log("Stopped bike journey!");
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        this.logger.log("Received an intent...");
+
         if (intent != null && INTENT_ACTION.equals(intent.getAction())) {
             if (ActivityTransitionResult.hasResult(intent)) {
+                logger.log("Got a usable result from the intent");
                 ActivityTransitionResult intentResult = ActivityTransitionResult
                         .extractResult(intent);
                 List<ActivityTransitionEvent> transitionEvents = intentResult.getTransitionEvents();
@@ -79,21 +84,32 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
                     ActivityTransitionEvent transitionEvent = transitionEvents.get(i);
                     int transitionType = transitionEvent.getTransitionType();
 
+                    logger.log(
+                            "activity=" + transitionEvent.getTransitionType() + " transitionType=" + transitionType
+                    );
+
                     if (transitionEvent.getActivityType() == DetectedActivity.ON_BICYCLE) {
                         if (transitionEvent.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                             logger.log(
-                                    "AutomaticJourneyCreator",
                                     "Cycle started."
                             );
 
-                            startCycleJourney(context);
+                            try {
+                                logger.log("Trying to start cycle journey...");
+                                startCycleJourney(context);
+                                logger.log("Started cycle journey successfully");
+                            } catch (Exception exception) {
+                                logger.log("startCycleJourney threw! " + exception.toString());
+                            }
                         } else {
                             logger.log(
-                                    "AutomaticJourneyCreator",
-                                    "Cycle finished."
+                                    "Cycle finished. Trying to stop Cycle journey"
                             );
 
                             stopCycleJourney(context);
+                            logger.log(
+                                    "Stopped cycle journey successfully"
+                            );
                         }
                     }
 

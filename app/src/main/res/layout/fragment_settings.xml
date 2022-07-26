@@ -88,4 +88,25 @@
         app:layout_constraintBottom_toBottomOf="@+id/enhancedPrivacyTextView"
         app:layout_constraintTop_toTopOf="@+id/enhancedPrivacyTextView"/>
 
+    <TextView
+        android:id="@+id/backgroundCollectionTextView"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="100dp"
+        app:layout_constraintLeft_toLeftOf="@+id/enhancedPrivacyTextView"
+        app:layout_constraintTop_toBottomOf="@+id/enhancedPrivacyTextView"
+        android:text="Enable Automatic Collection" />
+
+    <CheckBox
+        android:id="@+id/backgroundCollectionCheckbox"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintLeft_toLeftOf="@+id/enhancedPrivacyCheckBox"
+        app:layout_constraintTop_toTopOf="@+id/backgroundCollectionTextView"
+        app:layout_constraintBottom_toBottomOf="@+id/backgroundCollectionTextView"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

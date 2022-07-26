@@ -5,6 +5,7 @@ import android.os.Environment;
 import androidx.annotation.NonNull;
 
 import com.example.roadquality.BuildConfig;
+import com.example.roadquality.utils.LokiLogger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,6 +43,8 @@ public class Journey {
     public ArrayList<DataPoint> frames = new ArrayList();
     public boolean sendInPartials;
 
+    private LokiLogger logger = new LokiLogger("Journey.java");
+
     public Journey() {
         this.uuid = UUID.randomUUID();
     }
@@ -54,8 +57,9 @@ public class Journey {
             journeyStr = journeyFileReader.nextLine();
             journeyFileReader.close();
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+            new LokiLogger("JourneyFromFile").log("File not found error: " + e);
+        } catch (Exception e) {
+            new LokiLogger("JourneyFromFile").log("Unusual error in file reading: " + e);
         }
 
         return Journey.parse(journeyStr);
@@ -129,6 +133,7 @@ public class Journey {
     }
 
     public void cullTime(double originTime, double destinationTime) {
+        logger.log("Beginning cullTime with " + this.frames.size() + " frames");
         ArrayList<DataPoint> tmpFrames = new ArrayList<>();
 
         for (DataPoint frame : this.frames) {
@@ -138,6 +143,7 @@ public class Journey {
         }
 
         this.frames = tmpFrames;
+        logger.log(this.frames.size() + " frames remaining after cullTime");
     }
 
     public GPSPoint getOrigin() {
@@ -146,24 +152,22 @@ public class Journey {
                 return frame.gpsPoint;
             }
         }
+
         return new GPSPoint(0, 0);
     }
 
     public void cullDistance() throws JSONException {
+        logger.log("Culling distance...");
         int firstFrameAwayIdx = 0;
 
         for (DataPoint frame : this.frames) {
-            if (frame.gpsPoint.isPopulated()) {
-                System.out.println(frame.gpsPoint.getJSON(true).toString());
-            }
-        }
-
-        for (DataPoint frame : this.frames) {
-            if (frame.gpsPoint.isPopulated() && frame.distanceFrom(this.getOrigin()) > this.metresToCut) {
+            if (frame.gpsPoint.isPopulated() && frame.distanceFrom(this.getOrigin()) >= this.metresToCut) {
                 break;
             }
+
             firstFrameAwayIdx += 1;
         }
+        logger.log("Removing " + firstFrameAwayIdx + "frames from beginning...");
 
         Collections.reverse(this.frames);
 
@@ -177,33 +181,38 @@ public class Journey {
             lastFrameAwayIdx += 1;
         }
 
+        logger.log("Removing " + lastFrameAwayIdx + "frames from end...");
+
         Collections.reverse(this.frames);
 
-        if (firstFrameAwayIdx == 0 || lastFrameAwayIdx == 0) {
-            // Warn about not having enough?
-            // Bother even sending?
-            this.frames = new ArrayList<>();
-        } else {
-            ArrayList<DataPoint> tmpFrames = new ArrayList<>();
-            int idx = 0;
-            for (DataPoint frame : this.frames) {
-                idx += 1;
-                if (idx > firstFrameAwayIdx && idx < lastFrameAwayIdx) {
-                    tmpFrames.add(frame);
-                }
+        ArrayList<DataPoint> tmpFrames = new ArrayList<>();
+        int idx = 0;
+        for (DataPoint frame : this.frames) {
+            idx += 1;
+            if (idx > firstFrameAwayIdx && idx < lastFrameAwayIdx) {
+                tmpFrames.add(frame);
             }
-            this.frames = tmpFrames;
         }
+
+        this.frames = tmpFrames;
+        logger.log(this.frames.size() + " frames remaining after cull distance.");
     }
 
     public boolean cull() {
+        logger.log("Beginning cull");
+
         if (this.isCulled) {
+            logger.log("Already culled. Returning");
             return false;
         }
 
         if (this.frames.size() == 0) {
+            logger.log("No frames before cull! Returning");
             return true;
         }
+
+        logger.log("Have " + this.frames.size() + " frames to work with...");
+
         double originTime = this.frames.get(0).time;
         double destinationTime = this.frames.get(this.frames.size() - 1).time;
 
@@ -212,37 +221,45 @@ public class Journey {
             cullTime(originTime, destinationTime);
             this.isCulled = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log("Exception thrown in cullDistance/Time: " + e);
             return false;
         }
 
+        logger.log(this.frames.size() + " frames remaining after culls");
         return true;
     }
 
     public void send(boolean removeOnSuccess) throws JSONException, IOException {
         if (this.cull()) {
-
             if (this.frames.size() == 0) {
-                System.out.println("No frames after cull so not sending");
+                this.logger.log("No frames after cull so not sending");
             } else {
                 if (this.sendInPartials) {
+                    logger.log("Sending in partials...");
                     for (Journey partialJourney : this.getPartials().journeys) {
+                        logger.log("Saving partial");
                         partialJourney.save();
+                        logger.log("Sending partial");
                         partialJourney.send(true);
+                        logger.log("Partial sent.");
                     }
                 } else {
+                    this.logger.log("Sending normally");
                     this.postData(
                             this.getJSON(true, true).toString(),
                             removeOnSuccess
                     );
+                    this.logger.log("Journey sent.");
                 }
             }
         } else {
-            System.out.println("Could not cull so not bothering to send");
+            this.logger.log("Could not cull so not bothering to send");
         }
     }
 
     public void postData(String str, boolean removeOnSuccess) {
+        this.logger.log("Sending off the data: " + str);
+
         RequestBody body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), str);
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -257,6 +274,7 @@ public class Journey {
         call.enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
+                new LokiLogger().log("JourneyPostData", "postData got response: " + response.toString());
                 if (removeOnSuccess) {
                     if (response.code() == 201 || response.code() == 200) {
                         new File(filePath).delete();
@@ -266,7 +284,7 @@ public class Journey {
 
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                e.printStackTrace();
+                new LokiLogger().log("JourneyPostData", "Post failure: " + e.toString());
             }
         });
     }
