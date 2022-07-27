@@ -176,7 +176,8 @@ public class MainActivity extends AppCompatActivity /*implements EasyPermissions
                     PendingIntent.FLAG_MUTABLE);
 
             Task<Void> task = ActivityRecognition.getClient(this)
-                    .requestActivityTransitionUpdates(request, pendingIntent);
+                    .requestActivityUpdates(30000, pendingIntent);
+                    //.requestActivityTransitionUpdates(request, pendingIntent);
 
             task.addOnSuccessListener(unused -> logger.log("task was successful"));
             task.addOnFailureListener(unused -> logger.log("task was unsuccessful"));
