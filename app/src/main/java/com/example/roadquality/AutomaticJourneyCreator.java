@@ -54,7 +54,7 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
         Intent mainService = new Intent(context.getApplicationContext(), MainService.class);
         mainService.putExtra("transportType", "bike");
         mainService.putExtra("suspension", Boolean.FALSE);
-        mainService.putExtra("sendRelativeTime", enhancedPrivacy);
+        mainService.putExtra("sendRelativeTime", Boolean.TRUE);
         mainService.putExtra("minutesToCut", minutesToCut);
         mainService.putExtra("metresToCut", metresToCut);
         mainService.putExtra("sendPartials", enhancedPrivacy);
