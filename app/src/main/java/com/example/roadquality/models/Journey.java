@@ -1,5 +1,6 @@
 package com.example.roadquality.models;
 
+import android.content.Context;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
@@ -42,29 +43,22 @@ public class Journey {
     private boolean sendRelativeTime;
     public ArrayList<DataPoint> frames = new ArrayList();
     public boolean sendInPartials;
+    private Context context;
 
-    private LokiLogger logger = new LokiLogger("Journey.java");
+    private LokiLogger logger;
 
     public Journey() {
+        this.logger = new LokiLogger("Journey.java");
         this.uuid = UUID.randomUUID();
     }
 
-    public static Journey fromFile(String filepath) throws JSONException {
-        String journeyStr = null;
-        try {
-            File journeyFile = new File(filepath);
-            Scanner journeyFileReader = new Scanner(journeyFile);
-            journeyStr = journeyFileReader.nextLine();
-            journeyFileReader.close();
-        } catch (FileNotFoundException e) {
-            new LokiLogger("JourneyFromFile").log("File not found error: " + e);
-        } catch (Exception e) {
-            new LokiLogger("JourneyFromFile").log("Unusual error in file reading: " + e);
-        }
-
-        return Journey.parse(journeyStr);
+    public Journey(Context context) {
+        this.context = context;
+        this.logger = new LokiLogger(context, "Journey.java");
+        this.uuid = UUID.randomUUID();
     }
 
+    // TODO: This method is only ever used by tests... Never called in actual code.
     public static Journey parse(String journeyStr) throws JSONException {
         JSONObject journeyJson = new JSONObject(journeyStr);
 
@@ -274,7 +268,7 @@ public class Journey {
         call.enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
-                new LokiLogger().log("JourneyPostData", "postData got response: " + response.toString());
+                new LokiLogger(context, "Journey.java").log("JourneyPostData", "posted data successfully");
                 if (removeOnSuccess) {
                     if (response.code() == 201 || response.code() == 200) {
                         new File(filePath).delete();
@@ -284,7 +278,7 @@ public class Journey {
 
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                new LokiLogger().log("JourneyPostData", "Post failure: " + e.toString());
+                new LokiLogger(context, "Journey.java").log("JourneyPostData", "Post data failure: " + e.toString());
             }
         });
     }

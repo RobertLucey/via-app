@@ -95,21 +95,6 @@ public class JourneyTest {
     }
 
     @Test
-    public void fromFile() throws Exception {
-        Mockito.when(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)).thenReturn(new File("/tmp/"));
-
-        Journey journey = Journey.parse(testJourney);
-        journey.save();
-
-        Journey fromFile = Journey.fromFile(journey.filePath());
-
-        assertEquals(
-                journey.getJSON(true, false).toString(),
-                fromFile.getJSON(true, false).toString()
-        );
-    }
-
-    @Test
     public void getPartials() throws Exception {
         Journey journey = Journey.parse(testJourney);
 

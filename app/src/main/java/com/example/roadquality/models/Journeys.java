@@ -29,21 +29,4 @@ public class Journeys {
             this.journeys.get(this.journeys.size() - 1).append(dp);
         }
     }
-
-    public Journeys load() throws IOException {
-        Journeys journeys = new Journeys();
-
-        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
-
-        Files.list(new File(root + "/via").toPath())
-                .forEach(path -> {
-                    try {
-                        journeys.add(Journey.fromFile(path.toString()));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                });
-
-        return journeys;
-    }
 }

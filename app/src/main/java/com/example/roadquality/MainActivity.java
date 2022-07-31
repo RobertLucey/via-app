@@ -33,6 +33,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -189,7 +190,15 @@ public class MainActivity extends AppCompatActivity /*implements EasyPermissions
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Check the device ID is set or not:
+        SharedPreferences sharedPreferences = this.getSharedPreferences("Via Preferences", MODE_PRIVATE);
+        if (sharedPreferences.getString("device_id", "device_id_not_set") == "device_id_not_set") {
+            sharedPreferences.edit().putString("device_id", UUID.randomUUID().toString()).apply();
+        }
+
+        this.logger = new LokiLogger(this, "MainActivity.java");
         this.logger.log("onCreate called.");
+
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE); // Hides the title
         getSupportActionBar().hide();

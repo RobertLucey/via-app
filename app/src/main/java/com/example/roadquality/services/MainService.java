@@ -38,7 +38,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 public class MainService extends Service {
-    private LokiLogger logger = new LokiLogger("MainService.java");
+    private LokiLogger logger;
 
     LocationManager locationManager;
     LocationService locationService;
@@ -47,6 +47,7 @@ public class MainService extends Service {
     AccelerometerSensor accelerometerSensor;
 
     public MainService() {
+        this.logger = new LokiLogger(this, "MainService.java");
     }
 
     @Override
@@ -59,7 +60,7 @@ public class MainService extends Service {
     @Override
     public void onStart(Intent intent, int startId) {
         logger.log("onStart fired...");
-        this.journey = new Journey();
+        this.journey = new Journey(this);
         logger.log("new Journey() created...");
         this.journey.setTransportType(intent.getStringExtra("transportType"));
         this.journey.setSuspension(intent.getBooleanExtra("suspension", false));

@@ -1,6 +1,10 @@
 package com.example.roadquality.utils;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
+
+import com.example.roadquality.BuildConfig;
 
 import pl.mjaron.tinyloki.ILogStream;
 import pl.mjaron.tinyloki.LogController;
@@ -9,14 +13,27 @@ import pl.mjaron.tinyloki.TinyLoki;
 public class LokiLogger {
     private LogController lokiLogController = null;
     private ILogStream lokiLogStream = null;
-    private String tag = null;
+    private String tag;
+    private String device_id;
 
-    public LokiLogger() {
-        this.initLokiLogStream();
-    }
 
     public LokiLogger(String tag) {
         this.tag = tag;
+        this.device_id = "device_id_not_set";
+
+        this.initLokiLogStream();
+    }
+
+    public LokiLogger(Context context, String tag) {
+        if (context != null) {
+            this.device_id = context.getSharedPreferences("Via Preferences", Context.MODE_PRIVATE)
+                    .getString("device_id", "device_id_not_set");
+        } else {
+            this.device_id = "device_id_not_set";
+        }
+
+        this.tag = tag;
+
         this.initLokiLogStream();
     }
 
@@ -28,9 +45,10 @@ public class LokiLogger {
                 .start();
 
         this.lokiLogStream = this.lokiLogController.createStream(
-            TinyLoki.info()
-            .l("source", "Via App")
-            .l("version", "0.0.2")  // TODO: Use proper versioning.
+                TinyLoki.info()
+                        .l("source", "Via App")
+                        .l("version", BuildConfig.VERSION_NAME)
+                        .l("device_id", this.device_id)
         );
     }
 

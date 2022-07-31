@@ -109,4 +109,15 @@
         app:layout_constraintTop_toTopOf="@+id/backgroundCollectionTextView"
         app:layout_constraintBottom_toBottomOf="@+id/backgroundCollectionTextView"/>
 
+    <TextView
+        android:id="@+id/debugIDTextview"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginBottom="60dp"
+        app:layout_constraintLeft_toLeftOf="@+id/enhancedPrivacyTextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Debug ID: None" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

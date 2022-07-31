@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import com.example.roadquality.R;
 import com.example.roadquality.databinding.FragmentHomeBinding;
@@ -57,12 +58,14 @@ public class SettingsFragment extends Fragment {
         // "Enhanced Privacy" is simply sending partials and relative times.
         CheckBox enhancedPrivacyCheckbox = binding.enhancedPrivacyCheckBox;
         CheckBox backgroundCollectionCheckbox = binding.backgroundCollectionCheckbox;
+        TextView debugIDTextview = binding.debugIDTextview;
 
         // Initialize inputs with values from SharedPreferences:
         metresToCutSlider.setValue((float) preferences.getInt("metresToCut", 200));
         minutesToCutSlider.setValue((float) preferences.getInt("minutesToCut", 2));
         enhancedPrivacyCheckbox.setChecked(preferences.getBoolean("enhancedPrivacy", false));
         backgroundCollectionCheckbox.setChecked(preferences.getBoolean("backgroundCollection", false));
+        debugIDTextview.setText("Debug ID: " + preferences.getString("device_id", "None"));
 
         // And bind changes to the inputs to the SharedPreferences:
         metresToCutSlider.addOnChangeListener((slider, value, fromUser) -> preferences.edit().putInt("metresToCut", Math.round(value)).apply());

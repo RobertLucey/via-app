@@ -16,11 +16,12 @@ import java.time.Instant;
 import java.util.List;
 
 public class LocationService extends LocationCallback implements LocationListener {
-    LokiLogger logger = new LokiLogger("LocationService.java");
+    LokiLogger logger;
     Context context;
     Journey journey;
 
     LocationService(Context context, Journey journey) {
+        this.logger = new LokiLogger(context, "LocationService.java");
         this.context = context;
         this.journey = journey;
     }

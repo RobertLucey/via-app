@@ -22,7 +22,7 @@ import com.google.android.gms.location.DetectedActivity;
 import java.util.List;
 
 public class AutomaticJourneyCreator extends BroadcastReceiver {
-    private LokiLogger logger = new LokiLogger("AutomaticJourneyCreator.java");
+    private LokiLogger logger;
 
     public static final String INTENT_ACTION = "com.example.roadquality.ACTION_PROCESS_ACTIVITY_TRANSITIONS";
 
@@ -46,7 +46,6 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
 
     private void startCycleJourney(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("Via Preferences", MODE_PRIVATE);
-        logger.log("Got sharedPrefs in startCycleJourney");
         Boolean enhancedPrivacy = sharedPreferences.getBoolean("enhancedPrivacy", false);
         int metresToCut = sharedPreferences.getInt("metresToCut", 100);
         int minutesToCut = sharedPreferences.getInt("minutesToCut", 1);
@@ -59,7 +58,6 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
         mainService.putExtra("metresToCut", metresToCut);
         mainService.putExtra("sendPartials", enhancedPrivacy);
 
-        logger.log("Created intent in startCycleJourney");
         context.getApplicationContext().startService(mainService);
         logger.log("Started bike journey!");
     }
@@ -71,11 +69,11 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        this.logger.log("Received an intent...");
+        this.logger = new LokiLogger(context, "AutomaticJourneyCreator.java");
+        this.logger.log("Received a broadcast in AutomaticJourneyCreator...");
 
         if (intent != null && INTENT_ACTION.equals(intent.getAction())) {
             if (ActivityTransitionResult.hasResult(intent)) {
-                logger.log("Got a usable result from the intent");
                 ActivityTransitionResult intentResult = ActivityTransitionResult
                         .extractResult(intent);
                 List<ActivityTransitionEvent> transitionEvents = intentResult.getTransitionEvents();
@@ -85,7 +83,7 @@ public class AutomaticJourneyCreator extends BroadcastReceiver {
                     int transitionType = transitionEvent.getTransitionType();
 
                     logger.log(
-                            "activity=" + transitionEvent.getTransitionType() + " transitionType=" + transitionType
+                            "Activity Transition: activity=" + transitionEvent.getTransitionType() + " transitionType=" + transitionType
                     );
 
                     if (transitionEvent.getActivityType() == DetectedActivity.ON_BICYCLE) {
