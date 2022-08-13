@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity /*implements EasyPermissions
                     PendingIntent.FLAG_MUTABLE);
 
             Task<Void> task = ActivityRecognition.getClient(this)
-                    .requestActivityUpdates(10000, pendingIntent);
+                    .requestActivityUpdates(90 * 1000, pendingIntent);
                     //.requestActivityTransitionUpdates(request, pendingIntent);
 
             task.addOnSuccessListener(unused -> logger.log("task was successful"));
