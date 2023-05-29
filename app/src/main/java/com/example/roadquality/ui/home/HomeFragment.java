@@ -16,6 +16,7 @@ import com.example.roadquality.AutomaticJourneyCreator;
 import com.example.roadquality.R;
 import com.example.roadquality.databinding.FragmentHomeBinding;
 import com.example.roadquality.services.MainService;
+import com.example.roadquality.utils.LokiLogger;
 import com.google.android.gms.common.internal.safeparcel.SafeParcelableSerializer;
 import com.google.android.gms.location.ActivityTransition;
 import com.google.android.gms.location.ActivityTransitionEvent;
@@ -30,6 +31,7 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
+    private LokiLogger logger = new LokiLogger("HomeFragment.java");
     private FragmentHomeBinding binding;
 
     public View onCreateView(
@@ -61,6 +63,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void sendCycleEvent(boolean entered) {
+
+        if (entered) {
+            this.logger.log("Manually firing start cycle activity transition event");
+        } else {
+            this.logger.log("Manually firing stop cycle activity transition event");
+        }
         Intent intent = new Intent(getContext(), AutomaticJourneyCreator.class);
         intent.setAction(AutomaticJourneyCreator.INTENT_ACTION);
 
@@ -75,9 +83,12 @@ public class HomeFragment extends Fragment {
         SafeParcelableSerializer.serializeToIntentExtra(result, intent, "com.google.android.location.internal.EXTRA_ACTIVITY_TRANSITION_RESULT");
         try {
             getContext().sendBroadcast(intent);
+            this.logger.log("Event sent successfully");
         } catch (Exception exception) {
-            System.out.println("Fuck android");
-            System.out.println(exception);
+            this.logger.log("Event failed to broadcast:");
+            this.logger.log(exception.toString());
+            this.logger.log(exception.getMessage());
+            this.logger.log(exception.getStackTrace().toString());
         }
     }
 }
