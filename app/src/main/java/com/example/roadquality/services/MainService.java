@@ -59,6 +59,9 @@ public class MainService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
     public void onStart(Intent intent, int startId) {
+        // This is to ensure the logger has a valid Context.
+        this.logger = new LokiLogger(this, "MainService.java");
+
         logger.log("onStart fired...");
         this.journey = new Journey(this);
         logger.log("new Journey() created...");
@@ -107,6 +110,9 @@ public class MainService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // This is to ensure the logger has a valid Context.
+        this.logger = new LokiLogger(this, "MainService.java");
 
         logger.log("onCreate started...");
         accelerometerSensor = new AccelerometerSensor(this) {

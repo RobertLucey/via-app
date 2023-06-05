@@ -25,11 +25,15 @@ public class LokiLogger {
     }
 
     public LokiLogger(Context context, String tag) {
-        if (context != null) {
-            this.device_id = context.getSharedPreferences("Via Preferences", Context.MODE_PRIVATE)
-                    .getString("device_id", "device_id_not_set");
-        } else {
-            this.device_id = "device_id_not_set";
+        try {
+            if (context != null) {
+                SharedPreferences sp = context.getSharedPreferences("Via Preferences", Context.MODE_PRIVATE);
+                this.device_id = sp.getString("device_id", "device_id_not_set");
+            } else {
+                this.device_id = "device_id_not_set";
+            }
+        } catch (Exception e) {
+            this.device_id = "no_context_for_logger";
         }
 
         this.tag = tag;
