@@ -32,7 +32,7 @@ import okhttp3.Response;
 
 public class Journey {
 
-    final private String uploadUrl = "https://test-via-api.randombits.host/push_journey";
+    final private String uploadUrl = "https://via-api.randombits.host/push_journey";
 
     public UUID uuid;
     private boolean isCulled;
