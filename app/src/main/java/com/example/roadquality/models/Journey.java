@@ -32,7 +32,7 @@ import okhttp3.Response;
 
 public class Journey {
 
-    final private String uploadUrl = "https://hl7soqwrx3.execute-api.eu-west-1.amazonaws.com/default/upload-road-quality";
+    final private String uploadUrl = "https://test-via-api.randombits.host/push_journey";
 
     public UUID uuid;
     private boolean isCulled;
