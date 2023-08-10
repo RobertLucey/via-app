@@ -13,6 +13,6 @@ Use a mount for the phone if you can for bikes.
 	- Additionally it cuts first and last x metres. Whichever removes the most from either end takes effect
 - Send journeys in partials which are segmented journeys where only data from a 200m span are grouped and no relative time is included
 	- Put a small gap between so these are more difficult to stitch together
-	- TODO: stagger ability to download so can't stich together by data availability time
+	- TODO: stagger ability to download so can't stitch together by data availability time
 - If time is included in uploaded data, it is only relative time from the start of the turning on of the service
 	- If not sending relative time the journey is randomly reversed (or each partial is randomly reversed) so direction can not be determined
