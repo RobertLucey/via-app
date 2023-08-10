@@ -41,7 +41,7 @@
             <intent-filter>
                 <action android:name="via.android.roadquality.ACTION_PROCESS_ACTIVITY_TRANSITIONS"/>
             </intent-filter>
-            ></receiver>
+        </receiver>
 
         <service android:name="via.android.roadquality.services.MainService" />
 
