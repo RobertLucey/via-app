@@ -28,6 +28,7 @@ android {
     buildFeatures {
         viewBinding true
     }
+    namespace 'via.android.roadquality'
 }
 
 dependencies {
