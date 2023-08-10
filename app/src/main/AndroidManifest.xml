@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.roadquality">
+    package="via.android.roadquality">
 
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"
@@ -34,19 +34,19 @@
             This BroadcastReceiver listens for any ActivityTransition broadcasts and creates Journeys
         -->
         <receiver
-            android:name=".AutomaticJourneyCreator"
+            android:name="via.android.roadquality.AutomaticJourneyCreator"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.ACTIVITY_RECOGNITION">
             <intent-filter>
-                <action android:name="com.example.roadquality.ACTION_PROCESS_ACTIVITY_TRANSITIONS"/>
+                <action android:name="via.android.roadquality.ACTION_PROCESS_ACTIVITY_TRANSITIONS"/>
             </intent-filter>
             ></receiver>
 
-        <service android:name=".services.MainService" />
+        <service android:name="via.android.roadquality.services.MainService" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="via.android.roadquality.MainActivity"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
