@@ -1,0 +1,11 @@
+Privacy Policy
+
+Contact: itsrobertlucey@gmail.com (Robert Lucey)
+
+Location and accelerometer data is collected to facilitate the core features of the service. These may be collected automatically when you begin cycling / when the device believes you are cycling. If enabled, the time between gps points will be collected to calculate speed. The accelerometer hardware information may be stored to help in accuracy.
+
+All data that is uploaded will be available for anyone else to view. The data will be available indefinitely. Email to ask for removal / correction of data.
+
+Since all data is available for anyone to view the data could be hosted in multiple regions.
+
+Usage / diagnostic data will be automatically sent to google play.
