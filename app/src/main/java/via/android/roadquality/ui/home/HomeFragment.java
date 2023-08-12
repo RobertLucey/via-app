@@ -42,13 +42,8 @@ public class HomeFragment extends Fragment {
         Button startCycle = binding.simulateStartCycleButton;
         Button stopCycle = binding.simulateStopCycleButton;
 
-        startCycle.setOnClickListener(view -> {
-            sendCycleEvent(true);
-        });
-
-        stopCycle.setOnClickListener(view -> {
-            sendCycleEvent(false);
-        });
+        startCycle.setOnClickListener(view -> sendCycleEvent(true));
+        stopCycle.setOnClickListener(view -> sendCycleEvent(false));
 
         return root;
     }

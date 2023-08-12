@@ -27,6 +27,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity /*implements EasyPermissions
         logger.log("Called hasRequiredPermissions...");
         return EasyPermissions.hasPermissions(
                 this,
-                this.perms
+                perms
         );
     }
 
@@ -61,8 +62,8 @@ public class MainActivity extends AppCompatActivity /*implements EasyPermissions
         EasyPermissions.requestPermissions(
                 this,
                 "Via needs the following permissions to function properly",
-                this.permissionsRequestCode,
-                this.perms
+                permissionsRequestCode,
+                perms
         );
     }
 
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity /*implements EasyPermissions
     protected void onCreate(Bundle savedInstanceState) {
         // Check the device ID is set or not:
         SharedPreferences sharedPreferences = this.getSharedPreferences("Via Preferences", MODE_PRIVATE);
-        if (sharedPreferences.getString("device_id", "device_id_not_set") == "device_id_not_set") {
+        if (Objects.equals(sharedPreferences.getString("device_id", "device_id_not_set"), "device_id_not_set")) {
             sharedPreferences.edit().putString("device_id", UUID.randomUUID().toString()).apply();
         }
 

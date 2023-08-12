@@ -16,7 +16,7 @@ public class Journeys {
         this.journeys.add(journey);
     }
 
-    public void addToLast(DataPoint dp) throws JSONException {
+    public void addToLast(DataPoint dp) {
         if (this.journeys.size() == 0) {
             this.journeys.add(new Journey());
             this.addToLast(dp);

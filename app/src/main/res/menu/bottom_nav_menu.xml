@@ -9,10 +9,10 @@
     <item
         android:id="@+id/navigation_web_view"
         android:icon="@drawable/ic_baseline_map_24"
-        android:title="View Map" />
+        android:title="@string/view_map_nav_button_text" />
 
     <item
         android:id="@+id/navigation_settings_view"
         android:icon="@drawable/ic_baseline_settings_24"
-        android:title="Settings" />
+        android:title="@string/settings_nav_button_text" />
 </menu>

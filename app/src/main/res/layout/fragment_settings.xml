@@ -1,123 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="via.android.roadquality.ui.home.SettingsFragment">
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="via.android.roadquality.ui.home.SettingsFragment">
     <TextView
         android:id="@+id/minutesToCutTextView"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/minutes_to_cut_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
 
-        android:layout_marginLeft="44dp"
-        android:layout_marginTop="200dp"
-
-        android:text="Minutes to cut"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- The two top/bottom constraints align it horizontally with the TextView -->
     <com.google.android.material.slider.Slider
         android:id="@+id/minutesToCutSlider"
-
-        android:layout_width="180dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-
-        android:layout_marginLeft="92dp"
-
-        app:layout_constraintLeft_toRightOf="@+id/minutesToCutTextView"
-        app:layout_constraintTop_toTopOf="@+id/minutesToCutTextView"
-        app:layout_constraintBottom_toBottomOf="@+id/minutesToCutTextView"
-
+        app:layout_constraintTop_toBottomOf="@+id/minutesToCutTextView"
+        app:layout_constraintStart_toStartOf="@+id/minutesToCutTextView"
+        app:layout_constraintEnd_toEndOf="parent"
         android:value="2.0"
         android:valueFrom="0.0"
         android:valueTo="10.0"/>
 
-
-    <!-- Metres to cut off: -->
     <TextView
         android:id="@+id/metresToCutTextView"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:layout_marginTop="100dp"
-
-        android:text="Metres to cut"
-        app:layout_constraintLeft_toLeftOf="@+id/minutesToCutTextView"
-        app:layout_constraintTop_toTopOf="@+id/minutesToCutTextView" />
+        android:text="@string/metres_to_cut_text"
+        app:layout_constraintTop_toBottomOf="@+id/minutesToCutSlider"
+        app:layout_constraintStart_toStartOf="@+id/minutesToCutSlider"
+        android:layout_marginTop="16dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
 
     <com.google.android.material.slider.Slider
         android:id="@+id/metresToCutSlider"
-
-        android:layout_width="180dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-
-        android:layout_marginLeft="92dp"
-
-        app:layout_constraintLeft_toRightOf="@+id/metresToCutTextView"
-        app:layout_constraintTop_toTopOf="@+id/metresToCutTextView"
-        app:layout_constraintBottom_toBottomOf="@+id/metresToCutTextView"
-
+        app:layout_constraintTop_toBottomOf="@+id/metresToCutTextView"
+        app:layout_constraintStart_toStartOf="@+id/metresToCutTextView"
+        app:layout_constraintEnd_toEndOf="parent"
         android:value="200.0"
         android:valueFrom="0.0"
         android:valueTo="500.0"/>
 
-    <TextView
-        android:id="@+id/enhancedPrivacyTextView"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:layout_marginTop="100dp"
-        app:layout_constraintLeft_toLeftOf="@+id/metresToCutTextView"
-        app:layout_constraintTop_toBottomOf="@+id/metresToCutTextView"
-        android:text="Enhanced Privacy" />
-
     <CheckBox
         android:id="@+id/enhancedPrivacyCheckBox"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        app:layout_constraintLeft_toLeftOf="@+id/metresToCutSlider"
-        app:layout_constraintBottom_toBottomOf="@+id/enhancedPrivacyTextView"
-        app:layout_constraintTop_toTopOf="@+id/enhancedPrivacyTextView"/>
-
-    <TextView
-        android:id="@+id/backgroundCollectionTextView"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:layout_marginTop="100dp"
-        app:layout_constraintLeft_toLeftOf="@+id/enhancedPrivacyTextView"
-        app:layout_constraintTop_toBottomOf="@+id/enhancedPrivacyTextView"
-        android:text="Enable Automatic Collection" />
+        android:layout_marginTop="16dp"
+        android:text="@string/enhanced_privacy_text"
+        app:layout_constraintTop_toBottomOf="@+id/metresToCutSlider"
+        app:layout_constraintStart_toStartOf="@+id/metresToCutSlider"/>
 
     <CheckBox
         android:id="@+id/backgroundCollectionCheckbox"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        app:layout_constraintLeft_toLeftOf="@+id/enhancedPrivacyCheckBox"
-        app:layout_constraintTop_toTopOf="@+id/backgroundCollectionTextView"
-        app:layout_constraintBottom_toBottomOf="@+id/backgroundCollectionTextView"/>
+        android:layout_marginTop="16dp"
+        android:text="@string/enable_automatic_collection_text"
+        app:layout_constraintTop_toBottomOf="@+id/enhancedPrivacyCheckBox"
+        app:layout_constraintStart_toStartOf="@+id/enhancedPrivacyCheckBox"/>
 
     <TextView
         android:id="@+id/debugIDTextview"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:layout_marginBottom="60dp"
-        app:layout_constraintLeft_toLeftOf="@+id/enhancedPrivacyTextView"
+        android:text="@string/debug_id_none_text"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="Debug ID: None" />
+        app:layout_constraintStart_toStartOf="@+id/backgroundCollectionCheckbox"
+        android:layout_marginBottom="24dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

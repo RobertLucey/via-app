@@ -2,43 +2,13 @@
     <string name="app_name">Via</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-
-    <string-array name="transport_type">
-        <item>---</item>
-        <item>Bike</item>
-        <item>Car</item>
-        <item>Bus</item>
-        <item>Scooter</item>
-        <item>Other</item>
-    </string-array>
-
-    <string-array name="minutes_to_cut">
-        <item>2</item>
-        <item>5</item>
-        <item>10</item>
-    </string-array>
-
-    <string-array name="metres_to_cut">
-        <item>200</item>
-        <item>500</item>
-        <item>1000</item>
-    </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
-
+    <string name="simulate_start_cycle_text">Simulate Start Cycle</string>
+    <string name="simulate_stop_cycle_text">Simulate Stop Cycle</string>
+    <string name="minutes_to_cut_text">Minutes to Cut</string>
+    <string name="metres_to_cut_text">Metres to Cut Off</string>
+    <string name="enhanced_privacy_text">Enhanced Privacy</string>
+    <string name="enable_automatic_collection_text">Enable Automatic Collection</string>
+    <string name="debug_id_none_text">Debug ID: None</string>
+    <string name="view_map_nav_button_text">View Map</string>
+    <string name="settings_nav_button_text">Settings</string>
 </resources>

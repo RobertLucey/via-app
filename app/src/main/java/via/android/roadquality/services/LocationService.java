@@ -4,6 +4,8 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 
+import androidx.annotation.NonNull;
+
 import via.android.roadquality.models.AccelerometerPoint;
 import via.android.roadquality.models.DataPoint;
 import via.android.roadquality.models.GPSPoint;
@@ -26,7 +28,7 @@ public class LocationService extends LocationCallback implements LocationListene
     }
 
     @Override
-    public void onProviderDisabled(String provider) {
+    public void onProviderDisabled(@NonNull String provider) {
         logger.log("Provider " + provider + " disabled");
     }
 
@@ -44,7 +46,7 @@ public class LocationService extends LocationCallback implements LocationListene
         );
     }
 
-    public void onLocationResult(LocationResult locationResult) {
+    public void onLocationResult(@NonNull LocationResult locationResult) {
         if (locationResult == null) {
             return;
         }

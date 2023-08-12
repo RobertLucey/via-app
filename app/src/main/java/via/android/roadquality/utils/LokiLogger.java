@@ -64,8 +64,7 @@ public class LokiLogger {
         message = "tag=" + tag + " " + "level=" + String.valueOf(level) + " " + message;
         try {
             Log.println(Math.round(level / 10), tag, message);
-        } catch (Exception e) {
-            ;
+        } catch (Exception ignored) {
         }
         if (false) {  // Disable by default as it could be used for tracking
             this.lokiLogStream.log(message);

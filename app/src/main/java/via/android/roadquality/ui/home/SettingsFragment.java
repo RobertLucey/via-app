@@ -23,7 +23,6 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class SettingsFragment extends Fragment {
     private FragmentSettingsBinding binding;
-    private boolean running = false;
 
     public View onCreateView(
             @NonNull LayoutInflater inflater,

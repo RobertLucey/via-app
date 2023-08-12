@@ -39,7 +39,7 @@ public class Journey {
     private int minutesToCut;
     private int metresToCut;
     private boolean sendRelativeTime;
-    public ArrayList<DataPoint> frames = new ArrayList();
+    public ArrayList<DataPoint> frames = new ArrayList<>();
     public boolean sendInPartials;
     private Context context;
 
@@ -148,7 +148,7 @@ public class Journey {
         return new GPSPoint(0, 0);
     }
 
-    public void cullDistance() throws JSONException {
+    public void cullDistance() {
         logger.log("Culling distance...");
         int firstFrameAwayIdx = 0;
 
@@ -319,7 +319,7 @@ public class Journey {
         return data;
     }
 
-    public Journeys getPartials() throws JSONException {
+    public Journeys getPartials() {
         Journeys journeys = new Journeys();
 
         GPSPoint previousGPSPoint = null;
@@ -350,7 +350,7 @@ public class Journey {
             } else {
                 if (dp.distanceFrom(lastCheckpoint) < 200) {  // TODO: configure 200?
 
-                    // We don't want to include time when sending partials
+                    // TODO: reset time when sending partials
                     dp.time = 0;
                     journeys.addToLast(dp);
                 } else {
