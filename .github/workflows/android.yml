@@ -18,7 +18,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         distribution: 'temurin'
-        java-version: '11'
+        java-version: '17'
         cache: 'gradle'
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -36,7 +36,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
       - name: Build APK
         run: bash ./gradlew assembleRelease --stacktrace
