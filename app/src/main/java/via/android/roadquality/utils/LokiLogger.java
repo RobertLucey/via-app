@@ -67,7 +67,9 @@ public class LokiLogger {
         } catch (Exception e) {
             ;
         }
-        this.lokiLogStream.log(message);
+        if (false) {  // Disable by default as it could be used for tracking
+            this.lokiLogStream.log(message);
+        }
     }
 
     public void log(String tag, String message) {
