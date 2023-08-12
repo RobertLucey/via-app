@@ -99,7 +99,6 @@ public class Journey {
             this.frames = new ArrayList<>();
         }
         this.frames.add(dp);
-
     }
 
     public String filePath() {
@@ -173,7 +172,7 @@ public class Journey {
             lastFrameAwayIdx += 1;
         }
 
-        logger.log("Removing " + lastFrameAwayIdx + "frames from end...");
+        logger.log("Removing " + lastFrameAwayIdx + " frames from end...");
 
         Collections.reverse(this.frames);
 
