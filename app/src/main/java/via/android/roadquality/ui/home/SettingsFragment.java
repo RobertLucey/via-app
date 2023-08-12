@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import via.android.roadquality.databinding.FragmentHomeBinding;
 import via.android.roadquality.databinding.FragmentSettingsBinding;
 import com.google.android.material.slider.LabelFormatter;
 import com.google.android.material.slider.Slider;

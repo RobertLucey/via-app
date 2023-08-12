@@ -12,8 +12,6 @@ import android.content.SharedPreferences;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import via.android.roadquality.R;
-
 import via.android.roadquality.services.MainService;
 import via.android.roadquality.utils.LokiLogger;
 import com.google.android.gms.location.ActivityTransition;

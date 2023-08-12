@@ -1,8 +1,5 @@
 package via.android.roadquality;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import via.android.roadquality.models.AccelerometerPoint;
 
 import org.json.JSONException;

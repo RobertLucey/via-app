@@ -11,7 +11,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
-import via.android.roadquality.databinding.FragmentHomeBinding;
 import via.android.roadquality.databinding.FragmentWebViewBinding;
 
 /**
