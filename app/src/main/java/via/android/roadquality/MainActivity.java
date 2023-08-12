@@ -18,10 +18,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import via.android.roadquality.R;
-import via.android.roadquality.databinding.ActivityMainBinding;
-import via.android.roadquality.utils.LokiLogger;
-
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityTransition;
 import com.google.android.gms.location.ActivityTransitionRequest;
@@ -34,6 +30,8 @@ import java.util.List;
 import java.util.UUID;
 
 import pub.devrel.easypermissions.EasyPermissions;
+import via.android.roadquality.databinding.ActivityMainBinding;
+import via.android.roadquality.utils.LokiLogger;
 
 
 public class MainActivity extends AppCompatActivity /*implements EasyPermissions.PermissionCallbacks */{
