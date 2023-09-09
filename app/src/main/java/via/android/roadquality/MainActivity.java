@@ -1,9 +1,12 @@
 package via.android.roadquality;
 
+import static java.security.AccessController.getContext;
+
 import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -13,8 +16,11 @@ import android.view.WindowInsetsController;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -26,6 +32,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -34,8 +41,9 @@ import pub.devrel.easypermissions.EasyPermissions;
 import via.android.roadquality.databinding.ActivityMainBinding;
 import via.android.roadquality.utils.LokiLogger;
 
+import android.content.Context;
 
-public class MainActivity extends AppCompatActivity /*implements EasyPermissions.PermissionCallbacks */{
+public class MainActivity extends AppCompatActivity /*implements EasyPermissions.PermissionCallbacks */ {
 
     private LokiLogger logger = new LokiLogger("MainActivity.java");
 
@@ -47,33 +55,42 @@ public class MainActivity extends AppCompatActivity /*implements EasyPermissions
             Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
     };
 
     private boolean hasRequiredPermissions() {
         logger.log("Called hasRequiredPermissions...");
-        return EasyPermissions.hasPermissions(
-                this,
-                perms
-        );
+        logger.log(String.valueOf(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)));
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestRequiredPermissions(){
+    private void requestRequiredPermissions() {
         logger.log("Requesting required permissions...");
-        EasyPermissions.requestPermissions(
-                this,
-                "Via needs the following permissions to function properly",
-                permissionsRequestCode,
-                perms
-        );
+        // Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACTIVITY_RECOGNITION, Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
+
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        logger.log("Trying to set up broadcast receiver after permissions request result...");
-        this.setUpActivityTransitionBroadcastReceiver();
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
+                        1
+                );
+            }
+        } else {
+            // Permission was denied
+            // You may want to inform the user that the operation cannot be performed
+        }
     }
 
     private void makeFullScreen() {
@@ -157,11 +174,7 @@ public class MainActivity extends AppCompatActivity /*implements EasyPermissions
     private void setUpActivityTransitionBroadcastReceiver() {
         logger.log("Setting up ActivityTransitionBroadcastReceiver...");
 
-        // TODO: Needs to check background too:
-        if (this.hasRequiredPermissions() && EasyPermissions.hasPermissions(
-                this,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-        ) {
+        if (this.hasRequiredPermissions()) {
             logger.log("Have sufficient permissions for background activities");
             ActivityTransitionRequest request = new ActivityTransitionRequest(this.getActivityTransitionsList());
 
@@ -173,7 +186,7 @@ public class MainActivity extends AppCompatActivity /*implements EasyPermissions
 
             Task<Void> task = ActivityRecognition.getClient(this)
                     .requestActivityUpdates(150 * 1000, pendingIntent);
-                    //.requestActivityTransitionUpdates(request, pendingIntent);
+            //.requestActivityTransitionUpdates(request, pendingIntent);
 
             task.addOnSuccessListener(unused -> logger.log("task was successful"));
             task.addOnFailureListener(unused -> logger.log("task was unsuccessful"));
@@ -214,7 +227,9 @@ public class MainActivity extends AppCompatActivity /*implements EasyPermissions
                 R.id.navigation_settings_view
         ).build();
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment_activity_main);
+        NavController navController = navHostFragment.getNavController();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 

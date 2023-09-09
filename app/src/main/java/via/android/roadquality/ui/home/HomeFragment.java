@@ -1,14 +1,18 @@
 package via.android.roadquality.ui.home;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import via.android.roadquality.AutomaticJourneyCreator;
@@ -23,12 +27,13 @@ import com.google.android.gms.location.ActivityTransitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
 public class HomeFragment extends Fragment {
 
-    private LokiLogger logger = new LokiLogger("HomeFragment.java");
+    private final LokiLogger logger = new LokiLogger("HomeFragment.java");
     private FragmentHomeBinding binding;
 
     public View onCreateView(
@@ -57,6 +62,16 @@ public class HomeFragment extends Fragment {
     private void sendCycleEvent(boolean entered) {
 
         if (entered) {
+
+            CharSequence text = "Hello toast!";
+            int duration = Toast.LENGTH_SHORT;
+
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast toast = Toast.makeText(getContext(), "Must allow location all the time", Toast.LENGTH_LONG);
+                toast.show();
+                return;
+            }
             this.logger.log("Manually firing start cycle activity transition event");
         } else {
             this.logger.log("Manually firing stop cycle activity transition event");
@@ -80,7 +95,7 @@ public class HomeFragment extends Fragment {
             this.logger.log("Event failed to broadcast:");
             this.logger.log(exception.toString());
             this.logger.log(exception.getMessage());
-            this.logger.log(exception.getStackTrace().toString());
+            this.logger.log(Arrays.toString(exception.getStackTrace()));
         }
     }
 }

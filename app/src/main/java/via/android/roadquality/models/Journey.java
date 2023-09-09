@@ -43,7 +43,7 @@ public class Journey {
     public boolean sendInPartials;
     private Context context;
 
-    private LokiLogger logger;
+    private final LokiLogger logger;
 
     public Journey() {
         this.logger = new LokiLogger("Journey.java");
@@ -107,7 +107,7 @@ public class Journey {
         if (!viaBase.exists()) {
             viaBase.mkdirs();
         }
-        return viaBase.toString() + "/" + this.uuid + ".json";
+        return viaBase + "/" + this.uuid + ".json";
     }
 
     public void save() throws IOException, JSONException {
@@ -275,7 +275,7 @@ public class Journey {
 
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                new LokiLogger(context, "Journey.java").log("JourneyPostData", "Post data failure: " + e.toString());
+                new LokiLogger(context, "Journey.java").log("JourneyPostData", "Post data failure: " + e);
             }
         });
     }

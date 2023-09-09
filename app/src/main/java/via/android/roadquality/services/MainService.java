@@ -161,7 +161,7 @@ public class MainService extends Service {
             this.journey.send(true);
             logger.log("Journey sent!");
         } catch (IOException | JSONException e) {
-            logger.log("journey save/send error hit :(" + e.toString() + " " + e.getMessage());
+            logger.log("journey save/send error hit :(" + e + " " + e.getMessage());
             e.printStackTrace();
         }
 

@@ -1,7 +1,5 @@
 package via.android.roadquality.models;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 
 public class Journeys {

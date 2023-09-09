@@ -47,10 +47,6 @@ public class LocationService extends LocationCallback implements LocationListene
     }
 
     public void onLocationResult(@NonNull LocationResult locationResult) {
-        if (locationResult == null) {
-            return;
-        }
-
         for (Location l : locationResult.getLocations()) {
             this.onLocationChanged(l);
         }
